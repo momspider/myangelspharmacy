@@ -18,7 +18,9 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 /* ── SECURITY MIDDLEWARE ─────────────────────────────────────────── */
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false
+}));
 
 app.use(cors({
   origin: (origin, callback) => {
