@@ -33,12 +33,12 @@ router.post('/signup', async (req, res) => {
 
   // Profile row is created automatically by the DB trigger (handle_new_user)
   return res.status(201).json({
-    message: 'Account created. Please check your email to confirm your address.',
-    user: {
-      id:    data.user.id,
-      email: data.user.email,
-    },
-  });
+  message: 'Account created. Please check your email to confirm your address.',
+  user: data.user ? {
+    id:    data.user.id,
+    email: data.user.email,
+  } : null,
+});
 });
 
 /* ── LOG IN ──────────────────────────────────────────────────────── */
