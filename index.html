@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Angel's Pharmacy — Valenzuela City</title>
+  <meta name="description" content="Angel's Pharmacy — Safe, fast, and verified online pharmaceutical services for Valenzuela City." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- ✅ New Supabase-based auth module -->
+  <script src="auth.js"></script>
+  <style>
+    .btn-lg     { padding: 13px 28px; font-size: 15px; border-radius: 12px; }
+    .btn-outline {
+      background: transparent; border: 2px solid rgba(255,255,255,0.55);
+      color: white; padding: 11px 24px; border-radius: 12px;
+      font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: background .18s, border-color .18s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.12); border-color: white; }
+    .hero-lp {
+      background: linear-gradient(135deg, var(--red-deeper) 0%, var(--red) 55%, #e8192f 100%);
+      padding: 90px 24px 80px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero-lp::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 40%);
+      pointer-events: none;
+    }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 99px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+      color: white; margin-bottom: 22px; letter-spacing: 0.03em;
+    }
+    .hero-pill span { width: 7px; height: 7px; border-radius: 99px; background: #4ade80; display: inline-block; box-shadow: 0 0 6px #4ade80; }
+    .hero-lp h1 {
+      font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800; color: white; line-height: 1.15; margin-bottom: 18px;
+      max-width: 700px; margin-left: auto; margin-right: auto;
+    }
+    .hero-lp h1 em { font-style: normal; opacity: 0.75; }
+    .hero-lp p {
+      color: rgba(255,255,255,0.82); font-size: 16px; max-width: 520px;
+      margin: 0 auto 32px; line-height: 1.65;
+    }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .hero-badges  { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+    .hero-badge {
+      background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.22);
+      color: white; padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600;
+    }
+    .trust-bar { background: white; border-bottom: 1px solid var(--border); padding: 18px 24px; }
+    .trust-inner {
+      max-width: var(--container); margin: 0 auto;
+      display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap;
+    }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-sub); }
+    .trust-item .ico {
+      width: 30px; height: 30px; border-radius: 8px; background: var(--red-light);
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .section       { padding: 72px 24px; }
+    .section-inner { max-width: var(--container); margin: 0 auto; }
+    .section-label {
+      display: inline-block; background: var(--red-light); color: var(--red);
+      padding: 5px 13px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.04em; margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: var(--red-dark); margin-bottom: 10px; line-height: 1.2;
+    }
+    .section-sub { color: var(--muted); font-size: 15px; max-width: 560px; line-height: 1.6; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px; margin-top: 44px;
+    }
+    .feature-card {
+      background: white; border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: var(--red-mid); box-shadow: var(--shadow); transform: translateY(-3px); }
+    .feature-ico {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--red-light); display: flex; align-items: center;
+      justify-content: center; font-size: 22px; margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+    .feature-card p  { font-size: 13px; color: var(--muted); line-height: 1.55; }
+    .how-section { background: white; }
+    .steps-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0; margin-top: 44px; position: relative;
+    }
+    .step-lp { text-align: center; padding: 0 20px; position: relative; }
+    .step-lp:not(:last-child)::after {
+      content: '→'; position: absolute; right: -12px; top: 22px;
+      font-size: 20px; color: var(--red-mid);
+    }
+    .step-lp .snum {
+      width: 48px; height: 48px; border-radius: 99px;
+      background: linear-gradient(135deg, var(--red), var(--red-dark));
+      color: white; font-weight: 700; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px; box-shadow: 0 4px 14px rgba(192,21,42,0.3);
+    }
+    .step-lp h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .step-lp p  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+    .proof-section { background: var(--off-white); }
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px; margin-top: 44px;
+    }
+    .stat-card { background: white; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; }
+    .stat-num  { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 800; color: var(--red); line-height: 1; }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 6px; font-weight: 500; }
+    .cta-section {
+      background: linear-gradient(135deg, var(--red-deeper), var(--red));
+      text-align: center; padding: 80px 24px; position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: 'A+'; position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+      font-family: 'Playfair Display', serif; font-size: 200px; font-weight: 900;
+      color: rgba(255,255,255,0.05); line-height: 1; pointer-events: none;
+    }
+    .cta-section h2 {
+      font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+      color: white; margin-bottom: 12px;
+    }
+    .cta-section p { color: rgba(255,255,255,0.8); font-size: 15px; margin-bottom: 32px; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .cta-section .btn-white { padding: 13px 28px; font-size: 15px; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+    .cta-section .btn-white:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+    .auth-error {
+      display: none; background: #fde8eb; color: var(--red-dark);
+      border: 1px solid var(--red-mid); border-radius: 10px;
+      padding: 10px 14px; font-size: 13px; font-weight: 500;
+      margin-bottom: 14px; line-height: 1.4;
+    }
+    .auth-success {
+      display: none; background: #e8f5e9; color: #1e7d32;
+      border: 1px solid #a5d6a7; border-radius: 10px;
+      padding: 10px 14px; font-size: 13px; font-weight: 500;
+      margin-bottom: 14px; line-height: 1.4;
+    }
+    .show-pass-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 12px; font-weight: 600;
+      padding: 0; font-family: inherit; transition: color 0.15s;
+    }
+    .show-pass-btn:hover { color: var(--red); }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(26,5,8,0.5); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 20px; padding: 36px 32px;
+      width: 100%; max-width: 420px; position: relative;
+      box-shadow: 0 24px 80px rgba(192,21,42,0.22);
+      animation: popIn .25s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.93) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--red-light); border: none; border-radius: 8px;
+      width: 32px; height: 32px; cursor: pointer; font-size: 15px;
+      color: var(--red); display: flex; align-items: center; justify-content: center;
+    }
+    .modal-logo { text-align: center; margin-bottom: 20px; }
+    .modal-logo h2 { font-family: 'Playfair Display', serif; color: var(--red); font-size: 1.3rem; margin: 0; }
+    .modal-logo p  { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+    .tabs { display: flex; gap: 4px; background: var(--off-white); border-radius: 10px; padding: 4px; margin-bottom: 22px; }
+    .tab-btn {
+      flex: 1; padding: 8px; border: none; border-radius: 8px;
+      font-family: inherit; font-size: 13px; font-weight: 600;
+      cursor: pointer; background: transparent; color: var(--muted);
+      transition: background .18s, color .18s;
+    }
+    .tab-btn.active { background: white; color: var(--red); box-shadow: 0 1px 4px rgba(192,21,42,0.12); }
+    .form-submit {
+      width: 100%; padding: 12px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--red), var(--red-dark));
+      color: white; border: none; font-family: inherit; font-size: 14px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 4px 14px rgba(192,21,42,0.3);
+      transition: transform .15s, box-shadow .15s; margin-top: 4px;
+    }
+    .form-submit:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(192,21,42,0.4); }
+    .form-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+    .form-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 12px; }
+    .panel { display: none; } .panel.active { display: block; }
+    .lp-footer { background: white; border-top: 1px solid var(--border); padding: 28px 24px; text-align: center; }
+    .footer-inner  { max-width: var(--container); margin: 0 auto; }
+    .footer-brand  {
+      display: flex; align-items: center; gap: 10px; justify-content: center;
+      text-decoration: none; color: var(--red);
+      font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.05rem;
+      margin-bottom: 10px;
+    }
+    .footer-links  { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--red); }
+    .footer-copy   { font-size: 12px; color: var(--muted); }
+    @media (max-width: 700px) {
+      .steps-row  { gap: 28px; }
+      .step-lp::after { display: none; }
+      .hero-lp    { padding: 60px 20px 56px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Main navigation">
+  <div class="nav-container">
+    <a class="brand" href="index.html">
+      <div class="brand-icon" id="logo-wrap">
+        <img id="logo-img" src="assets/logo.png" alt="Angel's Pharmacy Logo"
+             style="width:100%;height:100%;object-fit:contain;" />
+        <span id="logo-fallback">A+</span>
+      </div>
+      Angel's Pharmacy
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">☰</button>
+    <ul id="nav-menu" class="nav-menu" hidden>
+      <li><a href="catalog.html">Medicines</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+      <a href="#" class="btn-ghost" onclick="openModal('login')">Log In</a>
+      <a href="#" class="btn"       onclick="openModal('signup')">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero-lp">
+  <div class="hero-pill"><span></span> Now serving Valenzuela City</div>
+  <h1>Your Community Pharmacy, <em>Now Online</em></h1>
+  <p>Upload prescriptions, check real-time medicine availability, and pick up at your nearest branch — all verified by a licensed pharmacist.</p>
+  <div class="hero-actions">
+    <a href="catalog.html" class="btn btn-lg">Browse Medicines →</a>
+    <a href="#" class="btn-outline" onclick="openModal('signup')">Create Free Account</a>
+  </div>
+  <div class="hero-badges">
+    <span class="hero-badge">✓ Licensed Pharmacists</span>
+    <span class="hero-badge">✓ Real-time Stock</span>
+    <span class="hero-badge">✓ Click &amp; Collect</span>
+    <span class="hero-badge">✓ DOH Compliant</span>
+    <span class="hero-badge">✓ GCash / Maya / Card</span>
+  </div>
+</section>
+
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item"><div class="ico">🏢</div> DOH Licensed — PH-123456</div>
+    <div class="trust-item"><div class="ico">📍</div> 2 Branches in Valenzuela City</div>
+    <div class="trust-item"><div class="ico">💊</div> 100% Pharmacist-Verified Orders</div>
+    <div class="trust-item"><div class="ico">🔒</div> Encrypted &amp; Secure Platform</div>
+  </div>
+</div>
+
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="section-label">WHAT WE OFFER</div>
+    <h2 class="section-title">Everything you need from a pharmacy, online</h2>
+    <p class="section-sub">Manage your health needs from home — safely, conveniently, and with a real pharmacist every step of the way.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-ico">📋</div>
+        <h3>Prescription Upload &amp; Verification</h3>
+        <p>Upload a photo or PDF of your prescription. A licensed pharmacist personally reviews and approves every order before dispensing.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-ico">💊</div>
+        <h3>Real-time Medicine Catalogue</h3>
+        <p>Browse live stock across both branches. Filter by same-day availability, Rx/OTC, and find generic substitutes instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-ico">🛒</div>
+        <h3>Click &amp; Collect</h3>
+        <p>Order online and pick up at our Punturin or Malinta branch. No delivery fee, no waiting in line — your order is ready when you arrive.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-ico">🔄</div>
+        <h3>Refill Reminders</h3>
+        <p>Set up automatic SMS and email reminders for your regular medications so you never run out of your essential medicines.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-ico">💬</div>
+        <h3>Pharmacist Chat</h3>
+        <p>Ask about dosage, drug interactions, or prescription queries directly through our live chat — staffed by a real licensed pharmacist.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-ico">📱</div>
+        <h3>GCash, Maya &amp; Card Payments</h3>
+        <p>Pay conveniently with GCash, Maya, debit/credit card, or cash in-store upon pick-up. Your choice, every time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section how-section" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-label">HOW IT WORKS</div>
+    <h2 class="section-title">From prescription to pick-up in 4 simple steps</h2>
+    <p class="section-sub">We've made getting your medicines as simple and safe as possible.</p>
+    <div class="steps-row">
+      <div class="step-lp">
+        <div class="snum">1</div>
+        <h4>Create an Account</h4>
+        <p>Sign up for free in under a minute — no paperwork needed.</p>
+      </div>
+      <div class="step-lp">
+        <div class="snum">2</div>
+        <h4>Upload Your Prescription</h4>
+        <p>Take a photo or upload a PDF of your doctor's prescription securely.</p>
+      </div>
+      <div class="step-lp">
+        <div class="snum">3</div>
+        <h4>Pharmacist Reviews &amp; Approves</h4>
+        <p>Our licensed pharmacist verifies dosage, interactions, and authenticity.</p>
+      </div>
+      <div class="step-lp">
+        <div class="snum">4</div>
+        <h4>Pick Up at Your Branch</h4>
+        <p>Get notified via SMS/email when your order is ready. Come in and collect!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section proof-section">
+  <div class="section-inner">
+    <div style="text-align:center;">
+      <div class="section-label">BY THE NUMBERS</div>
+      <h2 class="section-title">Trusted by the Valenzuela City community</h2>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">2</div><div class="stat-label">Branch Locations</div></div>
+      <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label">Pharmacist-Verified Orders</div></div>
+      <div class="stat-card"><div class="stat-num">&lt;1 day</div><div class="stat-label">Average Order Preparation</div></div>
+      <div class="stat-card"><div class="stat-num">DOH</div><div class="stat-label">Fully Licensed &amp; Compliant</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div style="position:relative;z-index:1;">
+    <h2>Ready to order your medicines?</h2>
+    <p>Create a free account today and experience safer, faster pharmacy service in Valenzuela City.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn-white" onclick="openModal('signup')">✓ Get Started — It's Free</a>
+      <a href="#" class="btn-outline" onclick="openModal('login')">I already have an account</a>
+    </div>
+  </div>
+</section>
+
+<footer class="lp-footer">
+  <div class="footer-inner">
+    <a class="footer-brand" href="index.html">
+      <div class="brand-icon" style="width:28px;height:28px;font-size:11px;">A+</div>
+      Angel's Pharmacy
+    </a>
+    <div class="footer-links">
+      <a href="about.html">About Us</a>
+      <a href="more-info.html">How It Works</a>
+      <a href="more-info.html">Privacy Policy</a>
+      <a href="more-info.html">Terms of Service</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <p class="footer-copy">© <span id="yr"></span> Angel's Pharmacy — Punturin &amp; Malinta, Valenzuela City &nbsp;·&nbsp; License No: PH-123456</p>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-logo">
+      <div class="brand-icon" style="margin:0 auto 8px;width:48px;height:48px;font-size:18px;">A+</div>
+      <h2 id="modal-title">Angel's Pharmacy</h2>
+      <p id="modal-sub">Sign in to your account</p>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-login"  onclick="switchTab('login')">Log In</button>
+      <button class="tab-btn"        id="tab-signup" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="panel active" id="panel-login">
+      <div class="form-group">
+        <label for="login-email">Email Address</label>
+        <input id="login-email" type="email" placeholder="yourname@email.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="login-pass" style="display:flex;justify-content:space-between;">
+          Password
+          <button type="button" class="show-pass-btn" data-target="login-pass">Show</button>
+        </label>
+        <input id="login-pass" type="password" placeholder="Enter your password" autocomplete="current-password" />
+      </div>
+      <div id="login-error"   class="auth-error"   role="alert" aria-live="polite"></div>
+      <div id="login-success" class="auth-success" role="status" aria-live="polite"></div>
+      <button class="form-submit" id="login-btn" onclick="handleLogin()">Log In →</button>
+      <p class="form-note">Forgot your password? <a href="contact.html" style="color:var(--red);">Contact us</a></p>
+    </div>
+
+    <!-- SIGN-UP PANEL -->
+    <div class="panel" id="panel-signup">
+      <div class="form-group">
+        <label for="signup-name">Full Name</label>
+        <input id="signup-name" type="text" placeholder="Juan dela Cruz" autocomplete="name" />
+      </div>
+      <div class="form-group">
+        <label for="signup-email">Email Address</label>
+        <input id="signup-email" type="email" placeholder="yourname@email.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label for="signup-phone">Phone Number <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+        <input id="signup-phone" type="tel" placeholder="09XX XXX XXXX" autocomplete="tel" />
+      </div>
+      <div class="form-group">
+        <label for="signup-pass" style="display:flex;justify-content:space-between;">
+          Password
+          <button type="button" class="show-pass-btn" data-target="signup-pass">Show</button>
+        </label>
+        <input id="signup-pass" type="password" placeholder="At least 6 characters" autocomplete="new-password" />
+      </div>
+      <div class="form-group">
+        <label for="signup-confirm">Confirm Password</label>
+        <input id="signup-confirm" type="password" placeholder="Re-enter your password" autocomplete="new-password" />
+      </div>
+      <div id="signup-error"   class="auth-error"   role="alert"  aria-live="polite"></div>
+      <div id="signup-success" class="auth-success" role="status" aria-live="polite"></div>
+      <button class="form-submit" id="signup-btn" onclick="handleSignup()">Create Account →</button>
+      <p class="form-note">By signing up, you agree to our <a href="more-info.html" style="color:var(--red);">Terms &amp; Privacy Policy</a>.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Redirect if already logged in ── */
+  (async () => {
+    const session = Auth.getSession();
+    if (session) {
+      const params   = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      if (redirect) window.location.replace(redirect);
+      else window.location.replace(session.role === 'admin' ? 'admin.html' : 'homepage.html');
+    }
+    /* Auto-open signup modal if ?signup=1 */
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('signup') === '1') openModal('signup');
+    if (params.get('redirect')) {
+      /* Show message that login is needed */
+      openModal('login');
+    }
+  })();
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  const logoImg = document.getElementById('logo-img');
+  if (logoImg) {
+    logoImg.onload  = () => { logoImg.style.display = ''; document.getElementById('logo-fallback').style.display = 'none'; };
+    logoImg.onerror = () => { logoImg.style.display = 'none'; };
+  }
+
+  const toggle = document.querySelector('.nav-toggle');
+  const menu   = document.getElementById('nav-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const open = !menu.hidden;
+      menu.hidden = open;
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+  }
+
+  /* ── Modal helpers ── */
+  function openModal(tab) {
+    if (event) event.preventDefault();
+    clearAuthMessages();
+    document.getElementById('modal-overlay').classList.add('open');
+    switchTab(tab || 'login');
+    document.getElementById(tab === 'signup' ? 'signup-name' : 'login-email').focus();
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    clearAuthMessages();
+  }
+  function handleOverlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+  function switchTab(tab) {
+    clearAuthMessages();
+    ['login','signup'].forEach(t => {
+      document.getElementById('tab-'   + t).classList.toggle('active', t === tab);
+      document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+    });
+    document.getElementById('modal-sub').textContent =
+      tab === 'login' ? 'Sign in to your account' : 'Create your free account';
+  }
+  function showError(panelId, msg) {
+    const el = document.getElementById(panelId + '-error');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
+  function showSuccess(panelId, msg) {
+    const el = document.getElementById(panelId + '-success');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
+  function clearAuthMessages() {
+    ['login-error','login-success','signup-error','signup-success'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = ''; el.style.display = 'none'; }
+    });
+  }
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.disabled    = loading;
+    btn.textContent = loading
+      ? (btnId === 'login-btn' ? 'Signing in…' : 'Creating account…')
+      : (btnId === 'login-btn' ? 'Log In →'    : 'Create Account →');
+  }
+
+  /* ── ✅ Login — calls real API via Auth module ── */
+  async function handleLogin() {
+    clearAuthMessages();
+    const email = document.getElementById('login-email').value;
+    const pass  = document.getElementById('login-pass').value;
+    setLoading('login-btn', true);
+    try {
+      const user = await Auth.logIn(email, pass);
+      /* Check for redirect param or pending cart */
+      const params   = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect') || sessionStorage.getItem('ap_redirect_after_login');
+      sessionStorage.removeItem('ap_redirect_after_login');
+      if (redirect) window.location.replace(redirect);
+      else window.location.replace(user.role === 'admin' ? 'admin.html' : 'homepage.html');
+    } catch (err) {
+      showError('login', err.message);
+      setLoading('login-btn', false);
+    }
+  }
+
+  /* ── ✅ Signup — calls real API via Auth module ── */
+  async function handleSignup() {
+    clearAuthMessages();
+    const name    = document.getElementById('signup-name').value;
+    const email   = document.getElementById('signup-email').value;
+    const phone   = document.getElementById('signup-phone').value;
+    const pass    = document.getElementById('signup-pass').value;
+    const confirm = document.getElementById('signup-confirm').value;
+    setLoading('signup-btn', true);
+    try {
+      await Auth.signUp(name, email, phone, pass, confirm);
+      // Show success — user needs to confirm email before logging in
+      showSuccess('signup', '✓ Account created! Check your email to confirm your address before logging in.');
+      setLoading('signup-btn', false);
+    } catch (err) {
+      showError('signup', err.message);
+      setLoading('signup-btn', false);
+    }
+  }
+
+  document.querySelectorAll('.show-pass-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      if (!input) return;
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'Hide' : 'Show';
+    });
+  });
+
+  document.getElementById('login-pass').addEventListener('keydown',    e => { if (e.key === 'Enter') handleLogin(); });
+  document.getElementById('signup-confirm').addEventListener('keydown', e => { if (e.key === 'Enter') handleSignup(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

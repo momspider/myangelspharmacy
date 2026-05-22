@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Angel's Pharmacy — Home</title>
+  <meta name="description" content="Angel's Pharmacy — Safe, fast, and verified online pharmaceutical services." />
+  <link rel="stylesheet" href="style.css" />
+  <!-- ✅ New Supabase-based auth module -->
+  <script src="auth.js"></script>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Main navigation">
+  <div class="nav-container">
+    <a class="brand" href="index.html">
+      <div class="brand-icon" id="logo-wrap">
+        <img id="logo-img" src="assets/logo.png" alt="Angel's Pharmacy Logo"
+             style="width:100%;height:100%;object-fit:contain;" />
+        <span id="logo-fallback">A+</span>
+      </div>
+      Angel's Pharmacy
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">☰</button>
+    <ul id="nav-menu" class="nav-menu" hidden>
+      <li><a href="homepage.html" class="active">Home</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="more-info.html">More Info</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px;margin-left:8px;flex-shrink:0;">
+      <div id="user-avatar"
+           style="width:34px;height:34px;border-radius:99px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;cursor:default;"
+           title=""></div>
+      <span id="user-name" style="font-size:13px;font-weight:600;color:var(--text-sub);white-space:nowrap;display:none;"></span>
+      <button class="btn-ghost" id="logout-btn" style="font-size:12px;padding:6px 12px;white-space:nowrap;"
+              onclick="Auth.logOut()">Log Out</button>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap" role="main">
+
+  <!-- HERO BANNER -->
+  <div class="hero">
+    <div class="hero-text">
+      <h1>Your Trusted Community Pharmacy</h1>
+      <p>Upload prescriptions, order medicines, and pick up at your nearest branch — fast, safe, and verified.</p>
+      <div class="hero-badges">
+        <span class="hero-badge">✓ Licensed Pharmacists</span>
+        <span class="hero-badge">✓ Real-time Stock</span>
+        <span class="hero-badge">✓ Click &amp; Collect</span>
+        <span class="hero-badge">✓ GCash / Maya / Card</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-white" id="quick-refill">⚡ Quick Refill</button>
+      <button class="btn-ghost" style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.3);color:white;"
+              onclick="location.href='more-info.html'">How it works</button>
+    </div>
+  </div>
+
+  <!-- SEARCH + CART BAR -->
+  <div class="page-header">
+    <div class="search" style="flex:1;max-width:560px;">
+      <label for="site-search" class="small" style="display:block;margin-bottom:5px;">Search medicines</label>
+      <input id="site-search" type="search" placeholder="Search medicines, symptoms, brands…" aria-label="Search medicines" />
+    </div>
+    <div class="actions">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-sub);cursor:pointer;">
+        <input type="checkbox" id="filter-sameday" style="accent-color:var(--red);" /> Same-day
+      </label>
+      <button class="btn-ghost" id="cart-btn" aria-label="Cart" style="display:flex;align-items:center;gap:4px;">
+        🛒 Cart <span id="cart-count" class="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT GRID -->
+  <div class="grid">
+
+    <!-- LEFT COLUMN -->
+    <section style="display:flex;flex-direction:column;gap:18px;">
+
+      <!-- PRESCRIPTION UPLOAD CARD -->
+      <div class="card" aria-labelledby="rx-head">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+          <div>
+            <h2 id="rx-head" style="margin-bottom:4px;">📋 Prescription Upload</h2>
+            <p class="small">Upload a photo or PDF — a licensed pharmacist verifies before dispensing.</p>
+          </div>
+          <span class="badge safe">Licensed Pharmacist</span>
+        </div>
+
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:260px;">
+            <label class="upload-area" for="rx-file" id="upload-area">
+              <div id="upload-prompt" style="flex:1;text-align:center;padding:10px 0;">
+                <div style="font-size:32px;margin-bottom:8px;">📄</div>
+                <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Drag &amp; drop or click to upload</div>
+                <div class="muted">Photo or PDF • Use good lighting</div>
+                <button class="btn" style="margin-top:12px;" type="button"
+                        onclick="event.preventDefault();document.getElementById('rx-file').click()">Browse File</button>
+              </div>
+              <div id="upload-preview" style="display:none;align-items:center;gap:12px;flex:1;">
+                <img id="preview-img" class="file-preview" alt="prescription preview" />
+                <div>
+                  <div id="preview-name" style="font-weight:700;font-size:14px;"></div>
+                  <div class="muted" id="preview-time" style="margin-top:3px;"></div>
+                  <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-ghost" id="view-ocr-btn" type="button">View OCR</button>
+                    <button class="btn" id="request-verification" type="button">Request Verification</button>
+                  </div>
+                </div>
+              </div>
+              <input id="rx-file" type="file" accept="image/*,application/pdf" capture="environment"
+                     aria-label="Upload prescription" />
+            </label>
+          </div>
+
+          <!-- VERIFICATION STATUS TIMELINE -->
+          <div style="width:240px;flex-shrink:0;">
+            <div class="timeline card" aria-live="polite" style="padding:14px;">
+              <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--red);">Verification Status</div>
+              <ol id="status-list" style="list-style:none;padding:0;margin:0;">
+                <li id="st-uploaded" style="opacity:0.45;">
+                  <div style="display:flex;gap:10px;align-items:flex-start;">
+                    <div class="dot" id="dot-uploaded" style="margin-top:5px;"></div>
+                    <div><div class="status-title">Uploaded</div><div class="muted">File received</div></div>
+                  </div>
+                </li>
+                <li id="st-verified" style="opacity:0.45;margin-top:10px;">
+                  <div style="display:flex;gap:10px;align-items:flex-start;">
+                    <div class="dot" id="dot-verified" style="margin-top:5px;"></div>
+                    <div><div class="status-title">Verified</div><div class="muted">Pharmacist approved</div></div>
+                  </div>
+                </li>
+                <li id="st-dispensed" style="opacity:0.45;margin-top:10px;">
+                  <div style="display:flex;gap:10px;align-items:flex-start;">
+                    <div class="dot" id="dot-dispensed" style="margin-top:5px;"></div>
+                    <div><div class="status-title">Ready</div><div class="muted">Ready for pick-up</div></div>
+                  </div>
+                </li>
+              </ol>
+              <div class="divider"></div>
+              <div class="small">SMS &amp; email updates when available.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MEDICINES & HEALTH CARD -->
+      <div class="card" aria-labelledby="products-head">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <h2 id="products-head" style="margin-bottom:2px;">💊 Medicines &amp; Health</h2>
+            <div class="small">Search results &amp; curated picks</div>
+          </div>
+          <div id="results-counter" class="muted" style="font-size:13px;"></div>
+        </div>
+        <!-- ✅ Populated by loadMedicines() below -->
+        <div id="products" class="products" role="list">
+          <div style="text-align:center;padding:32px;color:var(--muted);">Loading medicines…</div>
+        </div>
+      </div>
+
+      <!-- REFILL REMINDERS -->
+      <div class="card" aria-labelledby="orders-head">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div>
+            <h2 id="orders-head" style="margin-bottom:2px;">🔄 Refill Reminders</h2>
+            <div class="small">Manage your repeat medications</div>
+          </div>
+        </div>
+        <div id="refills"></div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside style="display:flex;flex-direction:column;gap:16px;">
+
+      <div class="card">
+        <div class="pharm-info">
+          <div>
+            <div class="small" style="margin-bottom:2px;">Verified Pharmacy</div>
+            <div style="font-weight:700;font-size:15px;font-family:'Playfair Display',serif;color:var(--red);">Angel's Pharmacy</div>
+            <div class="license">License No: PH-123456</div>
+          </div>
+          <span class="badge online">● Online</span>
+        </div>
+        <div class="divider"></div>
+        <div style="font-weight:700;font-size:13px;margin-bottom:8px;">💬 Pharmacist Chat</div>
+        <div class="chat-box" id="chat-box" role="log" aria-live="polite">
+          <div class="chat-msg">
+            <div class="who them">Pharmacist</div>
+            <div class="body">Hi! I'm a licensed pharmacist. Ask about dosage, drug interactions, or prescription queries.</div>
+          </div>
+        </div>
+        <div class="chat-input">
+          <input id="chat-input" aria-label="Message pharmacist" placeholder="e.g. Is this safe with Metformin?" />
+          <button class="btn" id="chat-send">Send</button>
+        </div>
+        <div class="small" style="margin-top:8px;">Available Mon–Sat, 8:00 AM – 6:00 PM</div>
+      </div>
+
+      <!-- CLICK & COLLECT -->
+      <div class="card">
+        <h3 style="color:var(--red);margin-bottom:10px;">📍 Click &amp; Collect</h3>
+        <p class="small" style="margin-bottom:12px;">Choose your branch and pick up your order — no delivery fee.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;" id="branch-punturin">
+            <input type="radio" name="branch" value="punturin" style="accent-color:var(--red);" />
+            <div>
+              <div style="font-weight:600;font-size:13px;">Punturin Branch</div>
+              <div class="muted">Valenzuela City</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;" id="branch-malinta">
+            <input type="radio" name="branch" value="malinta" style="accent-color:var(--red);" />
+            <div>
+              <div style="font-weight:600;font-size:13px;">Malinta Branch</div>
+              <div class="muted">Valenzuela City</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- MY ORDERS -->
+      <div class="card">
+        <h3 style="color:var(--red);margin-bottom:10px;">📦 My Orders</h3>
+        <div id="my-orders">
+          <div class="small muted">Loading orders…</div>
+        </div>
+      </div>
+
+      <!-- SAFETY -->
+      <div class="card">
+        <h3 style="color:var(--red);margin-bottom:8px;">🔒 Safety &amp; Verification</h3>
+        <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:12px;">All prescriptions are reviewed by a licensed pharmacist before dispensing. ID may be required for controlled substances.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-ghost" id="view-license">View License</button>
+          <button class="btn-ghost" onclick="location.href='more-info.html'">How It Works</button>
+        </div>
+      </div>
+
+      <!-- SUPPORT -->
+      <div class="card">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div class="support-ico">📞</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">Customer Support</div>
+            <div class="muted">Available Mon–Sat, 8 AM–6 PM</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="small" style="color:var(--red);">Emergency? Call your local medical services immediately.</div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <span id="year"></span> Angel's Pharmacy — Valenzuela City &nbsp;|&nbsp;
+    <a href="more-info.html">Privacy Policy</a> &nbsp;|&nbsp;
+    <a href="more-info.html">Terms</a> &nbsp;|&nbsp;
+    <a href="contact.html">Contact</a>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- backend.js handles: cart, chat, prescription upload preview, refills -->
+<script src="backend.js" defer></script>
+
+<script>
+  /* ── ✅ Auth guard — async, uses real Supabase session ── */
+  let _currentUser = null;
+
+  (async () => {
+    _currentUser = await Auth.requireAuth();
+    if (!_currentUser) return; // requireAuth() redirects if no session
+
+    /* Populate user greeting */
+    const firstName = (_currentUser.full_name || _currentUser.email).split(' ')[0];
+    const initial   = firstName.charAt(0).toUpperCase();
+    const avatar = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('user-name');
+    if (avatar) { avatar.textContent = initial; avatar.title = _currentUser.full_name || ''; }
+    if (nameEl) { nameEl.textContent = 'Hi, ' + firstName + '!'; nameEl.style.display = ''; }
+
+    /* Load data now that we have a valid session */
+    await loadMedicines();
+    await loadMyOrders();
+  })();
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const logoImg = document.getElementById('logo-img');
+  if (logoImg) {
+    logoImg.onload  = () => { logoImg.style.display = ''; const fb = document.getElementById('logo-fallback'); if (fb) fb.style.display = 'none'; };
+    logoImg.onerror = () => { logoImg.style.display = 'none'; };
+  }
+
+  const toggle = document.querySelector('.nav-toggle');
+  const menu   = document.getElementById('nav-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const open = !menu.hidden;
+      menu.hidden = open;
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+  }
+
+  /* ── ✅ Load medicines from real API ── */
+  async function loadMedicines(search = '', sameDayOnly = false) {
+    const grid    = document.getElementById('products');
+    const counter = document.getElementById('results-counter');
+    grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">Loading…</div>';
+
+    try {
+     let path = '/medicines?';
+    if (search)      path += `search=${encodeURIComponent(search)}&`;
+    if (sameDayOnly) path += `same_day=true&`;
+      const res  = await Auth.fetch(path);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Failed to load medicines.');
+
+      counter.textContent = `${data.length} result${data.length !== 1 ? 's' : ''}`;
+
+      if (data.length === 0) {
+        grid.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);">No medicines found.</div>';
+        return;
+      }
+
+      grid.innerHTML = data.map(med => `
+        <div class="product-card" role="listitem" data-id="${med.medicine_id}">
+          <div class="product-img-wrap">
+            ${med.image_url
+              ? `<img src="${med.image_url}" alt="${med.name}" class="product-img" style="width:100%;height:140px;object-fit:cover;border-radius:10px;" onerror="this.style.display='none'" />`
+              : `<div style="font-size:28px;text-align:center;">💊</div>`}
+          </div>
+          <div class="product-info">
+            <div class="product-name">${med.name}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 8px;">
+              ${med.requires_rx    ? '<span class="badge rx">Rx</span>'          : '<span class="badge otc">OTC</span>'}
+              ${med.same_day_available ? '<span class="badge safe">Same Day</span>' : ''}
+              ${med.category       ? `<span class="badge" style="background:var(--off-white);color:var(--muted);border:1px solid var(--border);">${med.category}</span>` : ''}
+            </div>
+            <div class="product-price">₱${parseFloat(med.unit_price).toFixed(2)}</div>
+          </div>
+          <button class="btn add-to-cart"
+                  data-id="${med.medicine_id}"
+                  data-name="${med.name}"
+                  data-price="${med.unit_price}"
+                  data-rx="${med.requires_rx}"
+                  onclick="window._addToCart && window._addToCart(this)">
+            Add to Cart
+          </button>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      grid.innerHTML = `<div style="text-align:center;padding:32px;color:var(--red);">⚠ ${err.message}</div>`;
+    }
+  }
+
+  /* ── ✅ Load my orders from real API ── */
+  async function loadMyOrders() {
+    const container = document.getElementById('my-orders');
+    try {
+      const res  = await Auth.fetch('/orders/admin/all')
+      const data = await res.json();
+
+      if (!res.ok || data.length === 0) {
+        container.innerHTML = '<div class="small muted">No orders yet.</div>';
+        return;
+      }
+
+      const statusColors = {
+        pending:   'var(--muted)',
+        confirmed: '#1565C0',
+        ready:     '#2e7d32',
+        completed: '#4caf50',
+        cancelled: 'var(--red)',
+      };
+
+      container.innerHTML = data.slice(0, 5).map(order => `
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:13px;font-weight:600;">${order.branches?.name || 'Branch'}</div>
+            <span style="font-size:12px;font-weight:700;color:${statusColors[order.status] || 'var(--muted)'};">
+              ${order.status.toUpperCase()}
+            </span>
+          </div>
+          <div class="small muted">${new Date(order.placed_at).toLocaleDateString('en-PH')} · ₱${parseFloat(order.total_amount).toFixed(2)}</div>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      container.innerHTML = '<div class="small muted">Could not load orders.</div>';
+    }
+  }
+
+  /* ── Search & filter listeners ── */
+  let searchTimer;
+  document.getElementById('site-search').addEventListener('input', e => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+      const sameDayOnly = document.getElementById('filter-sameday').checked;
+      loadMedicines(e.target.value.trim(), sameDayOnly);
+    }, 350);
+  });
+
+  document.getElementById('filter-sameday').addEventListener('change', () => {
+    const search      = document.getElementById('site-search').value.trim();
+    const sameDayOnly = document.getElementById('filter-sameday').checked;
+    loadMedicines(search, sameDayOnly);
+  });
+
+  /* ── Quick refill shortcut ── */
+  document.getElementById('quick-refill').addEventListener('click', () => {
+    document.getElementById('site-search').focus();
+  });
+
+  /* ── Prescription upload — sends to real API ── */
+  document.getElementById('rx-file').addEventListener('change', async function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    // Show preview immediately
+    const previewName = document.getElementById('preview-name');
+    const previewTime = document.getElementById('preview-time');
+    const previewImg  = document.getElementById('preview-img');
+    const uploadPrompt  = document.getElementById('upload-prompt');
+    const uploadPreview = document.getElementById('upload-preview');
+
+    previewName.textContent = file.name;
+    previewTime.textContent = new Date().toLocaleString('en-PH');
+    if (file.type.startsWith('image/')) {
+      previewImg.src = URL.createObjectURL(file);
+      previewImg.style.display = '';
+    } else {
+      previewImg.style.display = 'none';
+    }
+    uploadPrompt.style.display  = 'none';
+    uploadPreview.style.display = 'flex';
+
+    // Update status timeline
+    document.getElementById('st-uploaded').style.opacity = '1';
+    document.getElementById('dot-uploaded').style.background = 'var(--red)';
+  });
+
+  /* ── Request verification button ── */
+  document.getElementById('request-verification')?.addEventListener('click', async function () {
+    const file     = document.getElementById('rx-file').files[0];
+    const branchEl = document.querySelector('input[name="branch"]:checked');
+
+    if (!file) { showToast('Please select a prescription file first.'); return; }
+    if (!branchEl) { showToast('Please select a branch first.'); return; }
+
+    this.disabled    = true;
+    this.textContent = 'Uploading…';
+
+    try {
+      const formData = new FormData();
+      formData.append('prescription', file);
+      formData.append('branch_id', branchEl.value); // Note: backend needs real UUID — see below
+
+      const token = sessionStorage.getItem('ap_access_token');
+      const res   = await fetch('http://localhost:3000/api/prescriptions', {
+        method:  'POST',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body:    formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Upload failed.');
+
+      // Update verification status
+      document.getElementById('st-verified').style.opacity = '0.6';
+      showToast('✓ Prescription uploaded! A pharmacist will review it shortly.');
+      this.textContent = '✓ Uploaded';
+
+    } catch (err) {
+      showToast('⚠ ' + err.message);
+      this.disabled    = false;
+      this.textContent = 'Request Verification';
+    }
+  });
+
+  /* ── Toast helper ── */
+  function showToast(msg, duration = 3000) {
+    const t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+</script>
+</body>
+</html>

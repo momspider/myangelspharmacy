@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>More Info — Angel's Pharmacy</title>
+  <meta name="description" content="FAQs, policies, payment methods, and everything you need to know about Angel's Pharmacy." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    details {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    details:first-of-type { padding-top: 4px; }
+    details:last-of-type  { border-bottom: none; padding-bottom: 4px; }
+    details summary {
+      font-weight: 700; font-size: 14px; cursor: pointer;
+      color: var(--text); list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: color 0.18s; padding-right: 4px; gap: 12px;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after {
+      content: '+'; font-size: 20px; font-weight: 300;
+      color: var(--red); transition: transform 0.22s var(--ease-spring); flex-shrink: 0;
+    }
+    details[open] summary::after { transform: rotate(45deg); }
+    details summary:hover { color: var(--red); }
+    details p { margin: 12px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Main navigation">
+  <div class="nav-container">
+    <a class="brand" href="index.html">
+      <div class="brand-icon" id="logo-wrap">
+        <img id="logo-img" src="assets/logo.png" alt="Angel's Pharmacy Logo"
+             style="width:100%;height:100%;object-fit:contain;" />
+        <span id="logo-fallback">A+</span>
+      </div>
+      Angel's Pharmacy
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">☰</button>
+    <ul id="nav-menu" class="nav-menu" hidden>
+      <li><a href="catalog.html">Medicines</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="more-info.html" class="active">More Info</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="page-banner">
+    <h1>More Information</h1>
+    <p>Policies, FAQs, and everything you need to know about our online pharmacy service.</p>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card">
+    <h2>Frequently Asked Questions</h2>
+    <details>
+      <summary>Do I need a prescription to order?</summary>
+      <p>Prescription (Rx) medicines require a valid prescription uploaded through our system. A licensed pharmacist will verify it before your order is prepared. Over-the-counter (OTC) medicines can be purchased without a prescription.</p>
+    </details>
+    <details>
+      <summary>How does Click &amp; Collect work?</summary>
+      <p>Browse medicines online, add them to your cart, and choose your preferred branch — either Punturin or Malinta. You'll receive a notification via SMS or email once your order is ready for pick-up. Simply visit the branch and present your order reference.</p>
+    </details>
+    <details>
+      <summary>How long does order preparation take?</summary>
+      <p>Most orders are prepared within the same business day if placed before noon. Orders placed after noon may be ready for the following business day. You will receive a notification once your order is ready.</p>
+    </details>
+    <details>
+      <summary>How are prescriptions verified?</summary>
+      <p>Once you upload a photo or PDF of your prescription, our system extracts the details automatically. A licensed pharmacist then reviews the prescription for dosage accuracy, drug interactions, and authenticity before approving your order.</p>
+    </details>
+    <details>
+      <summary>What payment methods are accepted?</summary>
+      <p>We accept GCash, Maya, bank transfer, and debit/credit card payments. Cash payment is also accepted in-store upon pick-up.</p>
+    </details>
+    <details>
+      <summary>Can I get medicine delivered to my home?</summary>
+      <p>Currently, our system supports in-store pick-up (Click &amp; Collect) only. Home delivery may be introduced in future updates. Stay tuned for announcements.</p>
+    </details>
+    <details>
+      <summary>What if I need a refill reminder?</summary>
+      <p>You can set up refill reminders through your customer account. We'll send you an SMS or email notification when it's time to restock your regular medicines.</p>
+    </details>
+  </div>
+
+  <!-- PAYMENT METHODS -->
+  <div class="card">
+    <h2>Payment Methods</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:6px;">
+      <div class="payment-card">
+        <div class="ico">📱</div>
+        <div class="name">GCash</div>
+        <div class="type">Mobile wallet</div>
+      </div>
+      <div class="payment-card">
+        <div class="ico">💜</div>
+        <div class="name">Maya</div>
+        <div class="type">Mobile wallet</div>
+      </div>
+      <div class="payment-card">
+        <div class="ico">💳</div>
+        <div class="name">Debit / Credit Card</div>
+        <div class="type">Visa &amp; Mastercard</div>
+      </div>
+      <div class="payment-card">
+        <div class="ico">💵</div>
+        <div class="name">Cash</div>
+        <div class="type">Pay in-store</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PICK-UP POLICY -->
+  <div class="card">
+    <h2>Pick-up Policy</h2>
+    <div class="info-row">
+      <div class="info-icon">⏰</div>
+      <div>
+        <div class="info-label">Order Cut-off</div>
+        <div class="info-value">Orders placed before 12:00 noon are prepared same day.</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">🪪</div>
+      <div>
+        <div class="info-label">ID Requirement</div>
+        <div class="info-value">A valid ID may be required for controlled or prescription medicines.</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">📦</div>
+      <div>
+        <div class="info-label">Packaging</div>
+        <div class="info-value">All medicines are packed with proper safety and temperature controls.</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">📲</div>
+      <div>
+        <div class="info-label">Notifications</div>
+        <div class="info-value">You'll receive an SMS and email once your order is ready for pick-up.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RETURNS & REFUNDS -->
+  <div class="card">
+    <h2>Returns &amp; Refunds</h2>
+    <p>Due to safety and health regulations, medicines generally cannot be returned once dispensed unless they are damaged upon receipt or incorrectly fulfilled.</p>
+    <p>If there is an issue with your order, please contact our customer support team within <strong>48 hours</strong> of pick-up and we will resolve it promptly.</p>
+    <div style="margin-top:18px;">
+      <a href="contact.html" class="btn" style="display:inline-block;text-decoration:none;">Contact Support</a>
+    </div>
+  </div>
+
+  <!-- PRIVACY -->
+  <div class="card">
+    <h2>Privacy &amp; Data Protection</h2>
+    <p>Angel's Pharmacy is committed to protecting your personal and medical information. All data transmitted through our platform is encrypted and stored securely.</p>
+    <div class="info-row">
+      <div class="info-icon">🔒</div>
+      <div>
+        <div class="info-label">Data Usage</div>
+        <div class="info-value">Personal and prescription data is used solely for processing your orders and providing pharmacy services.</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">🚫</div>
+      <div>
+        <div class="info-label">Third Parties</div>
+        <div class="info-value">We do not sell or share your data with third parties, except where required for pharmacist verification or order fulfillment.</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon">📧</div>
+      <div>
+        <div class="info-label">Communications</div>
+        <div class="info-value">We only contact you for order updates, refill reminders, and service notifications you have opted into.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer style="max-width:var(--container);margin:0 auto;padding:22px 24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border);">
+  <span id="year"></span> Angel's Pharmacy — Valenzuela City &nbsp;|&nbsp;
+  <a href="contact.html">Contact Us</a>
+</footer>
+
+<script src="backend.js" defer></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const logoImg = document.getElementById('logo-img');
+  if (logoImg) {
+    logoImg.onload  = () => { logoImg.style.display = ''; document.getElementById('logo-fallback').style.display = 'none'; };
+    logoImg.onerror = () => { logoImg.style.display = 'none'; };
+  }
+
+  const toggle = document.querySelector('.nav-toggle');
+  const menu   = document.getElementById('nav-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const open = !menu.hidden;
+      menu.hidden = open;
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+  }
+
+  const nav = document.querySelector('.site-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+</script>
+</body>
+</html>

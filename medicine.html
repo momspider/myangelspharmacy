@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Medicine Detail — Angel's Pharmacy</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="auth.js"></script>
+  <style>
+    .detail-wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 60px; }
+    .breadcrumb { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+    .breadcrumb a { color: var(--red); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .detail-grid {
+      display: grid; grid-template-columns: 340px 1fr;
+      gap: 28px; align-items: start;
+    }
+    @media (max-width: 700px) { .detail-grid { grid-template-columns: 1fr; } }
+    .detail-img-wrap {
+      background: white; border-radius: var(--radius);
+      border: 1.5px solid var(--border); overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .detail-img { width: 100%; height: 300px; object-fit: cover; }
+    .detail-img-placeholder {
+      width: 100%; height: 300px; background: var(--red-light);
+      display: flex; align-items: center; justify-content: center; font-size: 80px;
+    }
+    .detail-info { display: flex; flex-direction: column; gap: 16px; }
+    .detail-header { background: white; border-radius: var(--radius); border: 1.5px solid var(--border); padding: 24px; box-shadow: var(--shadow-sm); }
+    .detail-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .detail-name { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 800; color: var(--text); margin: 0 0 6px; line-height: 1.2; }
+    .detail-sku { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+    .detail-price { font-size: 2rem; font-weight: 800; color: var(--red); margin-bottom: 20px; }
+    .detail-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .detail-actions .btn { padding: 13px 28px; font-size: 15px; flex: 1; }
+    .detail-actions .btn-ghost { padding: 12px 20px; font-size: 14px; }
+    .detail-card { background: white; border-radius: var(--radius); border: 1.5px solid var(--border); padding: 20px; box-shadow: var(--shadow-sm); }
+    .detail-card h3 { font-size: 14px; font-weight: 700; color: var(--red); margin: 0 0 14px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row .label { color: var(--muted); font-weight: 500; }
+    .detail-row .value { font-weight: 600; color: var(--text); text-align: right; }
+    .rx-notice {
+      background: #fff3e0; border: 1.5px solid #ffe0b2; border-radius: 12px;
+      padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .rx-notice .ico { font-size: 20px; flex-shrink: 0; }
+    .rx-notice p { margin: 0; font-size: 13px; color: #b45309; line-height: 1.5; }
+    .login-prompt-overlay {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(26,5,8,0.5); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .login-prompt-overlay.open { display: flex; }
+    .login-prompt-modal {
+      background: white; border-radius: 20px; padding: 36px 32px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 24px 80px rgba(192,21,42,0.22);
+      text-align: center; animation: popIn .25s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.93) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .login-prompt-ico { font-size: 40px; margin-bottom: 12px; }
+    .login-prompt-modal h3 { font-family: 'Playfair Display', serif; color: var(--red); margin: 0 0 8px; }
+    .login-prompt-modal p { color: var(--muted); font-size: 14px; margin: 0 0 24px; line-height: 1.5; }
+    .login-prompt-btns { display: flex; gap: 10px; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Main navigation">
+  <div class="nav-container">
+    <a class="brand" href="index.html">
+      <div class="brand-icon" id="logo-wrap">
+        <img id="logo-img" src="assets/logo.png" alt="Angel's Pharmacy Logo"
+             style="width:100%;height:100%;object-fit:contain;" />
+        <span id="logo-fallback">A+</span>
+      </div>
+      Angel's Pharmacy
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">☰</button>
+    <ul id="nav-menu" class="nav-menu" hidden>
+      <li><a href="catalog.html">Medicines</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="more-info.html">More Info</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div id="nav-auth" style="display:flex;gap:8px;align-items:center;flex-shrink:0;"></div>
+  </div>
+</nav>
+
+<div class="detail-wrap">
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> › <a href="catalog.html">Medicines</a> › <span id="breadcrumb-name">Loading…</span>
+  </div>
+
+  <div id="detail-content">
+    <div style="text-align:center;padding:60px;color:var(--muted);">Loading medicine details…</div>
+  </div>
+</div>
+
+<footer style="max-width:var(--container);margin:0 auto;padding:22px 24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border);">
+  <span id="year"></span> Angel's Pharmacy — Valenzuela City &nbsp;|&nbsp;
+  <a href="contact.html">Contact Us</a>
+</footer>
+
+<!-- LOGIN PROMPT -->
+<div class="login-prompt-overlay" id="login-prompt" onclick="handlePromptOverlay(event)">
+  <div class="login-prompt-modal">
+    <div class="login-prompt-ico">🔐</div>
+    <h3>Login Required</h3>
+    <p id="login-prompt-msg">Please log in to add this medicine to your cart.</p>
+    <div class="login-prompt-btns">
+      <button class="btn-ghost" onclick="closeLoginPrompt()">Continue Browsing</button>
+      <a href="index.html" class="btn" id="login-redirect-btn">Log In / Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let _medicine = null;
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const logoImg = document.getElementById('logo-img');
+if (logoImg) {
+  logoImg.onload  = () => { logoImg.style.display = ''; document.getElementById('logo-fallback').style.display = 'none'; };
+  logoImg.onerror = () => { logoImg.style.display = 'none'; };
+}
+
+const toggle = document.querySelector('.nav-toggle');
+const menu   = document.getElementById('nav-menu');
+if (toggle && menu) {
+  toggle.addEventListener('click', () => {
+    const open = !menu.hidden;
+    menu.hidden = open;
+    toggle.setAttribute('aria-expanded', String(!open));
+  });
+}
+
+/* ── Nav auth ── */
+function renderNavAuth() {
+  const session = Auth.getSession();
+  const navAuth = document.getElementById('nav-auth');
+  if (session) {
+    const initial = (session.full_name || session.email).charAt(0).toUpperCase();
+    navAuth.innerHTML = `
+      <div style="width:32px;height:32px;border-radius:99px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">${initial}</div>
+      <a href="${session.role === 'admin' ? 'admin.html' : 'homepage.html'}" class="btn" style="font-size:12px;padding:7px 14px;">My Account</a>
+    `;
+  } else {
+    navAuth.innerHTML = `
+      <a href="index.html" class="btn-ghost" style="font-size:13px;">Log In</a>
+      <a href="index.html?signup=1" class="btn" style="font-size:13px;">Sign Up</a>
+    `;
+  }
+}
+renderNavAuth();
+
+/* ── Load medicine by ID from URL ── */
+async function loadMedicine() {
+  const params = new URLSearchParams(window.location.search);
+  const id     = params.get('id');
+
+  if (!id) {
+    document.getElementById('detail-content').innerHTML = `
+      <div style="text-align:center;padding:60px;color:var(--red);">
+        ⚠ No medicine specified. <a href="catalog.html" style="color:var(--red);">Go back to catalog</a>
+      </div>`;
+    return;
+  }
+
+  try {
+    const res  = await fetch(`${API}/api/medicines/${id}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Medicine not found.');
+
+    _medicine = data;
+    document.title = `${data.name} — Angel's Pharmacy`;
+    document.getElementById('breadcrumb-name').textContent = data.name;
+    renderDetail(data);
+
+  } catch (err) {
+    document.getElementById('detail-content').innerHTML = `
+      <div style="text-align:center;padding:60px;color:var(--red);">
+        ⚠ ${err.message}. <a href="catalog.html" style="color:var(--red);">Go back to catalog</a>
+      </div>`;
+  }
+}
+
+function renderDetail(med) {
+  const img = med.image_url
+    ? `<img class="detail-img" src="${med.image_url}" alt="${esc(med.name)}" onerror="this.parentElement.innerHTML='<div class=detail-img-placeholder>💊</div>'" />`
+    : `<div class="detail-img-placeholder">💊</div>`;
+
+  const typeBadge = med.requires_rx
+    ? '<span class="badge rx">Rx — Prescription Required</span>'
+    : '<span class="badge otc">OTC — No Prescription Needed</span>';
+
+  const stockBadge = med.same_day_available
+    ? '<span class="badge safe">✓ Same-day Available</span>'
+    : '<span class="badge" style="background:#fff3e0;color:#b45309;">⏳ Next Business Day</span>';
+
+  const rxNotice = med.requires_rx ? `
+    <div class="rx-notice">
+      <div class="ico">⚠️</div>
+      <p><strong>Prescription Required.</strong> This medicine requires a valid prescription from a licensed physician. You will need to upload your prescription after logging in. A pharmacist will verify it before your order is prepared.</p>
+    </div>` : '';
+
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-grid">
+      <div>
+        <div class="detail-img-wrap">${img}</div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-header">
+          <div class="detail-badges">
+            ${typeBadge}
+            ${stockBadge}
+          </div>
+          <h1 class="detail-name">${esc(med.name)}</h1>
+          ${med.sku ? `<div class="detail-sku">SKU: ${esc(med.sku)}</div>` : ''}
+          <div class="detail-price">₱${parseFloat(med.unit_price).toFixed(2)}</div>
+          ${rxNotice}
+          <div class="detail-actions" style="margin-top:${med.requires_rx ? '16px' : '0'};">
+            <button class="btn" onclick="handleAddToCart()">🛒 Add to Cart</button>
+            <a href="catalog.html" class="btn-ghost">← Back to Catalog</a>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h3>Product Information</h3>
+          ${med.category ? `
+          <div class="detail-row">
+            <span class="label">Category</span>
+            <span class="value">${esc(med.category)}</span>
+          </div>` : ''}
+          <div class="detail-row">
+            <span class="label">Type</span>
+            <span class="value">${med.requires_rx ? 'Prescription (Rx)' : 'Over-the-Counter (OTC)'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Availability</span>
+            <span class="value">${med.same_day_available ? 'Same-day pick-up' : 'Next business day'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Supplier Verified</span>
+            <span class="value">${med.supplier_verified ? '✓ Yes' : '—'}</span>
+          </div>
+          ${med.sku ? `
+          <div class="detail-row">
+            <span class="label">SKU</span>
+            <span class="value">${esc(med.sku)}</span>
+          </div>` : ''}
+          <div class="detail-row">
+            <span class="label">Price</span>
+            <span class="value" style="color:var(--red);font-size:15px;">₱${parseFloat(med.unit_price).toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <h3>Pick-up Information</h3>
+          <div class="detail-row">
+            <span class="label">Punturin Branch</span>
+            <span class="value">Valenzuela City</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Malinta Branch</span>
+            <span class="value">Valenzuela City</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Hours (Mon–Fri)</span>
+            <span class="value">8:00 AM – 6:00 PM</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Hours (Saturday)</span>
+            <span class="value">8:00 AM – 12:00 PM</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ── Add to Cart — requires login ── */
+function handleAddToCart() {
+  const session = Auth.getSession();
+  if (!session) {
+    const currentPage = `medicine.html?id=${new URLSearchParams(window.location.search).get('id')}`;
+    sessionStorage.setItem('ap_redirect_after_login', currentPage);
+    if (_medicine) {
+      sessionStorage.setItem('ap_pending_cart', JSON.stringify({
+        id:         _medicine.medicine_id,
+        name:       _medicine.name,
+        price:      _medicine.unit_price,
+        requiresRx: _medicine.requires_rx,
+      }));
+    }
+    document.getElementById('login-prompt-msg').innerHTML =
+      _medicine
+        ? `Please log in to add <strong>${esc(_medicine.name)}</strong> to your cart.`
+        : 'Please log in to add items to your cart.';
+    document.getElementById('login-redirect-btn').href =
+      `index.html?redirect=${encodeURIComponent(currentPage)}`;
+    document.getElementById('login-prompt').classList.add('open');
+    return;
+  }
+  showToast(`✓ ${_medicine?.name || 'Medicine'} added to cart!`);
+}
+
+function closeLoginPrompt() { document.getElementById('login-prompt').classList.remove('open'); }
+function handlePromptOverlay(e) { if (e.target === document.getElementById('login-prompt')) closeLoginPrompt(); }
+
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+loadMedicine();
+</script>
+</body>
+</html>

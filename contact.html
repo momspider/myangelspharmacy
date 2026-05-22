@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Angel's Pharmacy</title>
+  <meta name="description" content="Contact Angel's Pharmacy — reach our Punturin or Malinta branch in Valenzuela City." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .contact-cta {
+      background: linear-gradient(135deg, var(--red-deeper), var(--red));
+      border-radius: var(--radius); padding: 28px 32px;
+      color: white; display: flex; align-items: center;
+      justify-content: space-between; gap: 20px; flex-wrap: wrap;
+      box-shadow: var(--shadow-lg); margin-bottom: 24px;
+      position: relative; overflow: hidden;
+    }
+    .contact-cta::before {
+      content: '📞'; position: absolute; right: 28px; top: 50%;
+      transform: translateY(-50%); font-size: 80px; opacity: 0.08;
+      pointer-events: none;
+    }
+    .contact-cta h2 { color: white; margin: 0 0 6px; font-size: 1.2rem; }
+    .contact-cta p  { color: rgba(255,255,255,0.82); font-size: 13px; margin: 0; }
+    .contact-cta .btn-white { flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Main navigation">
+  <div class="nav-container">
+    <a class="brand" href="index.html">
+      <div class="brand-icon" id="logo-wrap">
+        <img id="logo-img" src="assets/logo.png" alt="Angel's Pharmacy Logo"
+             style="width:100%;height:100%;object-fit:contain;" />
+        <span id="logo-fallback">A+</span>
+      </div>
+      Angel's Pharmacy
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">☰</button>
+    <ul id="nav-menu" class="nav-menu" hidden>
+      <li><a href="catalog.html">Medicines</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="more-info.html">More Info</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="page-banner">
+    <h1>Contact Us</h1>
+    <p>Have questions about prescriptions, orders, or medicines? We're here to help.</p>
+  </div>
+
+  <div class="contact-cta">
+    <div style="position:relative;z-index:1;">
+      <h2>Need immediate assistance?</h2>
+      <p>Visit us in person at our Punturin or Malinta branch, or send us a message below.</p>
+    </div>
+    <a href="mailto:hello@angelspharmacy.ph" class="btn-white" style="position:relative;z-index:1;">📧 Email Us Directly</a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;">
+
+    <!-- LEFT COLUMN: Info cards -->
+    <div style="display:flex;flex-direction:column;gap:18px;">
+
+      <div class="card">
+        <h2>Branch Locations</h2>
+        <div class="info-row">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">Punturin Branch</div>
+            <div class="info-value">[Address], Punturin, Valenzuela City</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">Malinta Branch</div>
+            <div class="info-value">[Address], Malinta, Valenzuela City</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Get in Touch</h2>
+        <div class="info-row">
+          <div class="info-icon">📧</div>
+          <div>
+            <div class="info-label">Email</div>
+            <div class="info-value">
+              <a href="mailto:hello@angelspharmacy.ph" style="color:var(--red);text-decoration:none;font-weight:600;">
+                hello@angelspharmacy.ph
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">📞</div>
+          <div>
+            <div class="info-label">Phone / Mobile</div>
+            <div class="info-value">[Phone number placeholder]</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">💬</div>
+          <div>
+            <div class="info-label">Facebook</div>
+            <div class="info-value">[Facebook page placeholder]</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Operating Hours</h2>
+        <div class="info-row">
+          <div class="info-icon">🗓️</div>
+          <div>
+            <div class="info-label">Monday – Friday</div>
+            <div class="info-value">8:00 AM – 6:00 PM</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">🗓️</div>
+          <div>
+            <div class="info-label">Saturday</div>
+            <div class="info-value">8:00 AM – 12:00 PM</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-icon">🚫</div>
+          <div>
+            <div class="info-label">Sunday</div>
+            <div class="info-value">Closed</div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="small">
+          We typically respond to inquiries within
+          <strong style="color:var(--red);">24 hours</strong> on business days.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: Contact form -->
+    <div class="card" style="align-self:start;">
+      <h2>Send a Message</h2>
+      <p class="muted" style="margin-bottom:20px;">Fill out the form and we'll get back to you as soon as possible.</p>
+
+      <div id="contact-form">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" placeholder="Your full name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" placeholder="yourname@email.com" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number <span style="font-weight:400;color:var(--muted);">(optional)</span></label>
+          <input id="phone" name="phone" type="tel" placeholder="09XX XXX XXXX" />
+        </div>
+        <div class="form-group">
+          <label for="branch">Branch Concern</label>
+          <select id="branch" name="branch">
+            <option value="">Select a branch</option>
+            <option value="punturin">Punturin Branch</option>
+            <option value="malinta">Malinta Branch</option>
+            <option value="general">General Inquiry</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="msg">Message</label>
+          <textarea id="msg" name="message" placeholder="Describe your question or concern…" required></textarea>
+        </div>
+
+        <button class="btn" type="button" id="send-message" style="width:100%;padding:12px;font-size:14px;">
+          Send Message
+        </button>
+
+        <div style="margin-top:10px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5;">
+          Your message is saved directly to our system and reviewed by our team.
+        </div>
+
+        <div id="form-feedback" style="margin-top:14px;font-size:13px;font-weight:600;color:var(--red);display:none;padding:12px 16px;border-radius:11px;background:var(--red-light);border:1px solid var(--red-mid);line-height:1.5;"></div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer style="max-width:var(--container);margin:0 auto;padding:22px 24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border);">
+  <span id="year"></span> Angel's Pharmacy — Valenzuela City
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script src="backend.js" defer></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const logoImg = document.getElementById('logo-img');
+  if (logoImg) {
+    logoImg.onload  = () => { logoImg.style.display = ''; document.getElementById('logo-fallback').style.display = 'none'; };
+    logoImg.onerror = () => { logoImg.style.display = 'none'; };
+  }
+
+  const toggle = document.querySelector('.nav-toggle');
+  const menu   = document.getElementById('nav-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', () => {
+      const open = !menu.hidden;
+      menu.hidden = open;
+      toggle.setAttribute('aria-expanded', String(!open));
+    });
+  }
+
+  const nav = document.querySelector('.site-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  /* ── Contact form — saves to real API ── */
+  document.getElementById('send-message').addEventListener('click', async function () {
+    const name   = document.getElementById('name').value.trim();
+    const email  = document.getElementById('email').value.trim();
+    const msg    = document.getElementById('msg').value.trim();
+    const branch = document.getElementById('branch').value;
+    const phone  = document.getElementById('phone').value.trim();
+    const fb     = document.getElementById('form-feedback');
+    const btn    = this;
+
+    fb.style.display = 'none';
+
+    if (!name || !email || !msg) {
+      fb.style.display = 'block';
+      fb.style.color = 'var(--red)';
+      fb.style.background = 'var(--red-light)';
+      fb.style.borderColor = 'var(--red-mid)';
+      fb.textContent = 'Please fill in all required fields.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+      const res  = await fetch('http://localhost:3000/api/admin/contacts', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ full_name: name, email, phone, branch, message: msg }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to send message.');
+
+      fb.style.display = 'block';
+      fb.style.color = '#1e7d32';
+      fb.style.background = '#e8f5e9';
+      fb.style.borderColor = '#a5d6a7';
+      fb.textContent = '✓ Message sent! We\'ll get back to you within 24 hours.';
+
+      document.getElementById('name').value   = '';
+      document.getElementById('email').value  = '';
+      document.getElementById('phone').value  = '';
+      document.getElementById('msg').value    = '';
+      document.getElementById('branch').value = '';
+    } catch (err) {
+      fb.style.display = 'block';
+      fb.style.color = 'var(--red)';
+      fb.style.background = 'var(--red-light)';
+      fb.style.borderColor = 'var(--red-mid)';
+      fb.textContent = '⚠ ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Message';
+    }
+  });
+</script>
+</body>
+</html>

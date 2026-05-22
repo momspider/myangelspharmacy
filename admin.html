@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Panel — Angel's Pharmacy</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="auth.js"></script>
+  <style>
+    .admin-shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 860px) {
+      .admin-shell { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .sidebar.open { display: flex; position: fixed; inset: 0; z-index: 200; }
+    }
+    .sidebar {
+      background: linear-gradient(180deg, var(--red-deeper) 0%, var(--red-dark) 100%);
+      display: flex; flex-direction: column;
+      padding: 0; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    }
+    .sidebar-brand { padding: 22px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+    .sidebar-brand .brand-icon { background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.3); margin-bottom: 10px; }
+    .sidebar-title { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 800; color: white; line-height: 1.2; }
+    .sidebar-sub { font-size: 11px; color: rgba(255,255,255,0.55); margin-top: 3px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+    .sidebar-nav { padding: 14px 10px; flex: 1; }
+    .sidebar-section { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.4); padding: 10px 10px 6px; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 10px; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.72);
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 2px; text-decoration: none;
+      border: none; background: transparent; width: 100%; text-align: left;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,0.1); color: white; }
+    .sidebar-link.active { background: rgba(255,255,255,0.18); color: white; font-weight: 700; }
+    .sidebar-link .ico { font-size: 16px; flex-shrink: 0; }
+    .sidebar-footer { padding: 14px 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .admin-badge { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.08); }
+    .admin-avatar { width: 32px; height: 32px; border-radius: 99px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: white; flex-shrink: 0; }
+    .admin-name { font-size: 12px; font-weight: 700; color: white; }
+    .admin-role { font-size: 10px; color: rgba(255,255,255,0.5); }
+    .logout-btn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px 12px; border-radius: 10px; margin-top: 8px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s, color 0.15s; }
+    .logout-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+    .admin-main { min-width: 0; background: var(--bg); }
+    .admin-topbar { background: white; border-bottom: 1px solid var(--border); padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 8px rgba(192,21,42,0.05); }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .menu-toggle { display: none; background: transparent; border: 1px solid var(--border); padding: 7px 11px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; color: var(--red); }
+    @media (max-width: 860px) { .menu-toggle { display: inline-flex; align-items: center; } }
+    .topbar-title { font-weight: 700; font-size: 15px; color: var(--text); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .topbar-pill { background: var(--red-light); color: var(--red); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 99px; letter-spacing: 0.03em; }
+    .admin-content { padding: 24px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: white; border-radius: 14px; padding: 18px 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: flex-start; gap: 14px; }
+    .stat-ico { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .stat-ico.red   { background: var(--red-light); }
+    .stat-ico.green { background: #e8f5e9; }
+    .stat-ico.blue  { background: #e3f2fd; }
+    .stat-ico.amber { background: #fff8e1; }
+    .stat-num { font-size: 1.7rem; font-weight: 800; color: var(--text); line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .section-header h2 { font-size: 15px; font-weight: 700; color: var(--text); margin: 0; }
+    .admin-table-wrap { background: white; border-radius: 14px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 24px; }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .admin-table thead tr { background: var(--red-light); }
+    .admin-table thead th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--red); white-space: nowrap; }
+    .admin-table tbody tr { border-top: 1px solid var(--border); transition: background 0.12s; }
+    .admin-table tbody tr:hover { background: var(--off-white); }
+    .admin-table td { padding: 12px 16px; color: var(--text); vertical-align: middle; }
+    .admin-table td.muted { color: var(--muted); font-size: 12px; }
+    .status-pill { display: inline-block; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+    .status-pill.pending   { background: #fff3e0; color: #b45309; }
+    .status-pill.verified  { background: #e8f5e9; color: #2e7d32; }
+    .status-pill.ready     { background: #e3f2fd; color: #1565c0; }
+    .status-pill.completed { background: #e8f5e9; color: #2e7d32; }
+    .status-pill.cancelled { background: #fde8eb; color: var(--red); }
+    .status-pill.active    { background: #e8f5e9; color: #2e7d32; }
+    .status-pill.inactive  { background: #f3f4f6; color: #6b7280; }
+    .row-action { background: transparent; border: 1px solid var(--border); padding: 4px 10px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--text-sub); transition: all 0.15s; margin-right: 4px; }
+    .row-action:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .row-action.danger:hover { border-color: #b45309; color: #b45309; background: #fff3e0; }
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+    .stock-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .stock-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .stock-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--red), var(--red-dark)); transition: width 0.4s; }
+    .stock-bar-fill.low  { background: linear-gradient(90deg, #b45309, #d97706); }
+    .stock-bar-fill.good { background: linear-gradient(90deg, #2e7d32, #4caf50); }
+    .qa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .qa-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+    .qa-card:hover { border-color: var(--red-mid); box-shadow: var(--shadow); transform: translateY(-2px); }
+    .qa-ico { font-size: 22px; }
+    .qa-label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .qa-desc  { font-size: 11px; color: var(--muted); line-height: 1.4; }
+    .edit-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.45); align-items: center; justify-content: center; }
+    .edit-overlay.open { display: flex; }
+    .edit-modal { background: white; border-radius: 18px; padding: 28px; width: min(480px, 95vw); box-shadow: var(--shadow-lg); position: relative; }
+    .edit-modal h3 { margin: 0 0 20px; font-size: 16px; font-weight: 700; }
+    .edit-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
+    .edit-close:hover { color: var(--red); }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; background: var(--red); color: white; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow-lg); transform: translateY(80px); opacity: 0; transition: transform 0.3s, opacity 0.3s; pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot { width: 32px; height: 32px; border-radius: 99px; background: var(--red-light); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .activity-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+    .activity-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ── POS STYLES ── */
+    .pos-shell {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      min-height: calc(100vh - 108px);
+    }
+    @media (max-width: 900px) { .pos-shell { grid-template-columns: 1fr; } }
+    .pos-products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+    .pos-product-btn {
+      background: white; border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 14px 12px;
+      cursor: pointer; transition: border-color .18s, box-shadow .18s, transform .18s;
+      text-align: left; font-family: inherit;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .pos-product-btn:hover { border-color: var(--red-mid); box-shadow: var(--shadow); transform: translateY(-2px); }
+    .pos-product-btn.rx-item { border-left: 3px solid var(--red); }
+    .pos-product-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .pos-product-price { font-size: 15px; font-weight: 800; color: var(--red); }
+    .pos-product-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; display: inline-block; }
+    .pos-cart {
+      background: white; border-radius: 16px;
+      border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+      display: flex; flex-direction: column;
+      position: sticky; top: 80px;
+      max-height: calc(100vh - 100px);
+    }
+    .pos-cart-header { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); }
+    .pos-cart-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text); }
+    .pos-cart-items { flex: 1; overflow-y: auto; padding: 10px 18px; }
+    .pos-cart-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+    .pos-cart-item:last-child { border-bottom: none; }
+    .pos-item-name { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+    .pos-item-price { font-size: 12px; color: var(--muted); }
+    .pos-qty-btn { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); background: var(--off-white); cursor: pointer; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--text); }
+    .pos-qty-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+    .pos-qty { font-size: 13px; font-weight: 700; min-width: 20px; text-align: center; }
+    .pos-cart-footer { padding: 14px 18px; border-top: 1px solid var(--border); }
+    .pos-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .pos-total-label { font-size: 14px; font-weight: 600; color: var(--muted); }
+    .pos-total-amount { font-size: 22px; font-weight: 800; color: var(--red); }
+    .pos-payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .pos-payment-btn { padding: 9px; border-radius: 10px; border: 1.5px solid var(--border); background: white; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; color: var(--text); }
+    .pos-payment-btn:hover { border-color: var(--red-mid); background: var(--red-light); color: var(--red); }
+    .pos-payment-btn.selected { border-color: var(--red); background: var(--red-light); color: var(--red); }
+    .pos-branch-select { width: 100%; padding: 9px 12px; border-radius: 10px; border: 1.5px solid var(--border); font-family: inherit; font-size: 13px; background: var(--off-white); color: var(--text); margin-bottom: 12px; }
+    .pos-process-btn { width: 100%; padding: 13px; border-radius: 12px; background: linear-gradient(135deg, var(--red), var(--red-dark)); color: white; border: none; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(192,21,42,0.3); transition: transform .15s, box-shadow .15s; }
+    .pos-process-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(192,21,42,0.4); }
+    .pos-process-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .pos-empty { text-align: center; padding: 32px 20px; color: var(--muted); font-size: 13px; }
+
+    /* ── Receipt modal ── */
+    .receipt-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
+    .receipt-overlay.open { display: flex; }
+    .receipt-modal { background: white; border-radius: 18px; padding: 0; width: min(400px, 95vw); box-shadow: var(--shadow-lg); overflow: hidden; }
+    .receipt-header { background: linear-gradient(135deg, var(--red-deeper), var(--red)); padding: 24px; text-align: center; color: white; }
+    .receipt-header h3 { margin: 0 0 4px; font-family: 'Playfair Display', serif; font-size: 1.2rem; }
+    .receipt-header p { margin: 0; font-size: 12px; opacity: 0.8; }
+    .receipt-body { padding: 20px 24px; }
+    .receipt-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px dashed var(--border); }
+    .receipt-row:last-child { border-bottom: none; }
+    .receipt-total { display: flex; justify-content: space-between; padding: 12px 0 0; font-size: 16px; font-weight: 800; color: var(--red); }
+    .receipt-footer { padding: 0 24px 24px; display: flex; gap: 10px; }
+
+    @media (max-width: 600px) {
+      .admin-content { padding: 14px; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon" style="width:38px;height:38px;font-size:15px;margin-bottom:10px;">A+</div>
+      <div class="sidebar-title">Angel's Pharmacy</div>
+      <div class="sidebar-sub">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Overview</div>
+      <button class="sidebar-link active" data-panel="dashboard" onclick="switchPanel('dashboard',this)">
+        <span class="ico">📊</span> Dashboard
+      </button>
+      <div class="sidebar-section">Management</div>
+      <button class="sidebar-link" data-panel="pos" onclick="switchPanel('pos',this)">
+        <span class="ico">🧾</span> POS
+      </button>
+      <button class="sidebar-link" data-panel="users" onclick="switchPanel('users',this)">
+        <span class="ico">👥</span> Users
+      </button>
+      <button class="sidebar-link" data-panel="products" onclick="switchPanel('products',this)">
+        <span class="ico">💊</span> Products
+      </button>
+      <button class="sidebar-link" data-panel="prescriptions" onclick="switchPanel('prescriptions',this)">
+        <span class="ico">📋</span> Prescriptions
+      </button>
+      <button class="sidebar-link" data-panel="orders" onclick="switchPanel('orders',this)">
+        <span class="ico">📦</span> Orders
+      </button>
+      <div class="sidebar-section">System</div>
+      <button class="sidebar-link" data-panel="branches" onclick="switchPanel('branches',this)">
+        <span class="ico">🏥</span> Branches
+      </button>
+      <button class="sidebar-link" data-panel="settings" onclick="switchPanel('settings',this)">
+        <span class="ico">⚙️</span> Settings
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-badge">
+        <div class="admin-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="admin-name" id="admin-name">Administrator</div>
+          <div class="admin-role" id="admin-email">admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="Auth.logOut()">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-pill">🛡️ Admin Access</span>
+        <button class="btn" onclick="Auth.logOut()" style="font-size:12px;padding:7px 14px;">Sign Out</button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="admin-panel active" id="panel-dashboard">
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-ico red">👥</div>
+            <div><div class="stat-num" id="stat-users">—</div><div class="stat-label">Registered Users</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico green">💊</div>
+            <div><div class="stat-num" id="stat-products">—</div><div class="stat-label">Products in Catalog</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico amber">📋</div>
+            <div><div class="stat-num" id="stat-pending">—</div><div class="stat-label">Pending Prescriptions</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico blue">📦</div>
+            <div><div class="stat-num" id="stat-orders">—</div><div class="stat-label">Orders Today</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico green">💰</div>
+            <div><div class="stat-num" id="stat-revenue">—</div><div class="stat-label">Revenue (30 days)</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico amber">⚠️</div>
+            <div><div class="stat-num" id="stat-lowstock">—</div><div class="stat-label">Low Stock Items</div></div>
+          </div>
+        </div>
+        <div class="section-header"><h2>Quick Actions</h2></div>
+        <div class="qa-grid">
+          <div class="qa-card" onclick="switchPanel('pos', document.querySelector('[data-panel=pos]'))">
+            <div class="qa-ico">🧾</div>
+            <div class="qa-label">Open POS</div>
+            <div class="qa-desc">Process walk-in sales at the counter.</div>
+          </div>
+          <div class="qa-card" onclick="switchPanel('prescriptions', document.querySelector('[data-panel=prescriptions]'))">
+            <div class="qa-ico">📋</div>
+            <div class="qa-label">Review Prescriptions</div>
+            <div class="qa-desc">Approve or reject pending Rx submissions.</div>
+          </div>
+          <div class="qa-card" onclick="switchPanel('orders', document.querySelector('[data-panel=orders]'))">
+            <div class="qa-ico">📦</div>
+            <div class="qa-label">Orders Queue</div>
+            <div class="qa-desc">View and manage pick-up orders.</div>
+          </div>
+          <div class="qa-card" onclick="switchPanel('products', document.querySelector('[data-panel=products]'))">
+            <div class="qa-ico">💊</div>
+            <div class="qa-label">Manage Products</div>
+            <div class="qa-desc">Edit prices and availability.</div>
+          </div>
+        </div>
+        <div class="section-header"><h2>Recent Activity</h2></div>
+        <div class="admin-table-wrap" style="padding:4px 0;">
+          <div style="padding:0 16px;" id="activity-feed">
+            <div style="padding:24px;text-align:center;color:var(--muted);">Loading activity…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ POS ══ -->
+      <div class="admin-panel" id="panel-pos">
+        <div class="section-header">
+          <h2>🧾 Point of Sale</h2>
+          <span class="muted" style="font-size:13px;">Walk-in counter sales</span>
+        </div>
+
+        <!-- Search bar -->
+        <div style="margin-bottom:16px;">
+          <input id="pos-search" type="search" placeholder="Search medicines…"
+                 style="width:100%;max-width:400px;"
+                 oninput="filterPosProducts(this.value)" />
+        </div>
+
+        <div class="pos-shell">
+          <!-- Product grid -->
+          <div>
+            <div class="pos-products-grid" id="pos-products-grid">
+              <div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);">Loading products…</div>
+            </div>
+          </div>
+
+          <!-- Cart -->
+          <div class="pos-cart">
+            <div class="pos-cart-header">
+              <h3>🛒 Current Sale</h3>
+              <div class="small muted" id="pos-item-count">0 items</div>
+            </div>
+            <div class="pos-cart-items" id="pos-cart-items">
+              <div class="pos-empty">No items added yet.<br>Click a product to add it.</div>
+            </div>
+            <div class="pos-cart-footer">
+              <!-- Branch -->
+              <select class="pos-branch-select" id="pos-branch">
+                <option value="">Select branch…</option>
+              </select>
+              <!-- Payment methods -->
+              <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">PAYMENT METHOD</div>
+              <div class="pos-payment-methods">
+                <button class="pos-payment-btn" data-method="cash"   onclick="selectPayment(this)">💵 Cash</button>
+                <button class="pos-payment-btn" data-method="gcash"  onclick="selectPayment(this)">📱 GCash</button>
+                <button class="pos-payment-btn" data-method="maya"   onclick="selectPayment(this)">💜 Maya</button>
+                <button class="pos-payment-btn" data-method="card"   onclick="selectPayment(this)">💳 Card</button>
+              </div>
+              <!-- Total -->
+              <div class="pos-total">
+                <span class="pos-total-label">TOTAL</span>
+                <span class="pos-total-amount" id="pos-total">₱0.00</span>
+              </div>
+              <button class="pos-process-btn" id="pos-process-btn" onclick="processSale()">
+                Process Sale →
+              </button>
+              <button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px;" onclick="clearPosCart()">
+                Clear Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ USERS ══ -->
+      <div class="admin-panel" id="panel-users">
+        <div class="section-header">
+          <h2>Registered Users</h2>
+          <span id="user-count-label" class="muted"></span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Registered</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="users-tbody">
+              <tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Loading users…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PRODUCTS ══ -->
+      <div class="admin-panel" id="panel-products">
+        <div class="section-header">
+          <h2>Product Catalog</h2>
+          <button class="btn" style="font-size:12px;" onclick="openAddProductModal()">+ Add Product</button>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Product Name</th><th>Price (₱)</th><th>Type</th><th>Same-day</th><th>Category</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="products-tbody">
+              <tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Loading products…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PRESCRIPTIONS ══ -->
+      <div class="admin-panel" id="panel-prescriptions">
+        <div class="section-header">
+          <h2>Prescription Queue</h2>
+          <span class="muted" id="rx-count-label"></span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Patient</th><th>File</th><th>Branch</th><th>Submitted</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="rx-tbody">
+              <tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Loading prescriptions…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ ORDERS ══ -->
+      <div class="admin-panel" id="panel-orders">
+        <div class="section-header">
+          <h2>Orders Queue</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <select id="order-status-filter" onchange="loadOrders()" style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-family:inherit;font-size:12px;background:white;">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="ready">Ready</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Order ID</th><th>Customer</th><th>Branch</th><th>Total</th><th>Placed</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="orders-tbody">
+              <tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Loading orders…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ BRANCHES ══ -->
+      <div class="admin-panel" id="panel-branches">
+        <div class="section-header"><h2>Branch Overview</h2></div>
+        <div id="branches-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;"></div>
+      </div>
+
+      <!-- ══ SETTINGS ══ -->
+      <div class="admin-panel" id="panel-settings">
+        <div class="section-header"><h2>System Settings</h2></div>
+        <div class="card" style="max-width:600px;">
+          <h3 style="margin:0 0 16px;font-size:15px;">Pharmacy Details</h3>
+          <div class="info-row"><div class="info-icon">🏢</div><div><div class="info-label">License</div><div class="info-value">PH-123456</div></div></div>
+          <div class="info-row"><div class="info-icon">📍</div><div><div class="info-label">Branches</div><div class="info-value">Punturin &amp; Malinta, Valenzuela City</div></div></div>
+          <div class="info-row"><div class="info-icon">🏛️</div><div><div class="info-label">Regulatory Body</div><div class="info-value">Department of Health (DOH), Philippines</div></div></div>
+        </div>
+        <div class="card" style="max-width:600px;margin-top:16px;">
+          <h3 style="margin:0 0 16px;font-size:15px;">Admin Account</h3>
+          <div class="info-row"><div class="info-icon">📧</div><div><div class="info-label">Email</div><div class="info-value" id="settings-email">—</div></div></div>
+          <div class="info-row"><div class="info-icon">🔖</div><div><div class="info-label">Role</div><div class="info-value">Administrator</div></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="edit-overlay" id="edit-overlay" onclick="handleEditOverlay(event)">
+  <div class="edit-modal">
+    <button class="edit-close" onclick="closeEditModal()">✕</button>
+    <h3 id="edit-title">Edit Product</h3>
+    <input type="hidden" id="edit-id" />
+    <div class="form-group"><label>Product Name</label><input type="text" id="edit-name" /></div>
+    <div class="form-group"><label>Price (₱)</label><input type="number" id="edit-price" step="0.01" min="0" /></div>
+    <div class="form-group">
+      <label>Type</label>
+      <select id="edit-rx" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);font-family:inherit;font-size:14px;background:var(--off-white);color:var(--text);">
+        <option value="true">Rx (Prescription Required)</option>
+        <option value="false">OTC (Over the Counter)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Same-day Availability</label>
+      <select id="edit-sameday" style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);font-family:inherit;font-size:14px;background:var(--off-white);color:var(--text);">
+        <option value="true">Yes — Same Day</option>
+        <option value="false">No — Next Day</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeEditModal()">Cancel</button>
+      <button class="btn" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="receipt-overlay" id="receipt-overlay">
+  <div class="receipt-modal">
+    <div class="receipt-header">
+      <h3>Angel's Pharmacy</h3>
+      <p>Official Receipt · License No: PH-123456</p>
+    </div>
+    <div class="receipt-body" id="receipt-body"></div>
+    <div class="receipt-footer">
+      <button class="btn-ghost" style="flex:1;" onclick="closeReceipt()">Close</button>
+      <button class="btn" style="flex:1;" onclick="printReceipt()">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3000/api';
+
+/* ── State ── */
+let _adminUser  = null;
+let _branches   = [];
+let _medicines  = [];
+let posCart     = [];
+let posPayment  = '';
+
+/* ── Boot ── */
+(async () => {
+  _adminUser = await Auth.requireAdmin();
+  if (!_adminUser) return;
+
+  /* Populate admin info in sidebar */
+  const name = _adminUser.full_name || _adminUser.email;
+  document.getElementById('admin-avatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('admin-name').textContent   = name;
+  document.getElementById('admin-email').textContent  = _adminUser.email;
+  document.getElementById('settings-email').textContent = _adminUser.email;
+
+  /* Load everything */
+  await Promise.all([loadDashboard(), loadBranches()]);
+  loadUsers();
+  loadProducts();
+  loadPrescriptions();
+  loadOrders();
+})();
+
+/* ══════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════ */
+async function loadDashboard() {
+  try {
+    const res  = await Auth.fetch(`${API}/admin/dashboard`);
+    const data = await res.json();
+    if (!res.ok) return;
+
+    const orders = data.orders || {};
+    const total  = Object.values(orders).reduce((s, v) => s + v, 0);
+    document.getElementById('stat-orders').textContent   = total;
+    document.getElementById('stat-pending').textContent  = data.pending_prescriptions ?? '—';
+    document.getElementById('stat-lowstock').textContent = data.low_stock_items ?? '—';
+    document.getElementById('stat-revenue').textContent  = '₱' + parseFloat(data.revenue_last_30_days || 0).toLocaleString('en-PH', {minimumFractionDigits:2});
+  } catch {}
+
+  /* Activity feed — recent orders */
+  try {
+    const res  = await Auth.fetch(`${API}/orders/admin/all`);
+    const data = await res.json();
+    if (!res.ok || !data.length) {
+      document.getElementById('activity-feed').innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">No recent activity.</div>';
+      return;
+    }
+    document.getElementById('activity-feed').innerHTML = data.slice(0, 5).map(o => `
+      <div class="activity-item">
+        <div class="activity-dot">📦</div>
+        <div>
+          <div class="activity-text"><strong>Order ${o.order_id.slice(0,8)}…</strong> — ${o.profiles?.full_name || 'Customer'} · ${o.branches?.name || ''}</div>
+          <div class="activity-time">${new Date(o.placed_at).toLocaleString('en-PH')} · ₱${parseFloat(o.total_amount).toFixed(2)} · <strong>${o.status}</strong></div>
+        </div>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+/* ══════════════════════════════════════════
+   BRANCHES
+══════════════════════════════════════════ */
+async function loadBranches() {
+  try {
+    const res  = await Auth.fetch(`${API}/medicines`); // branches come from medicines route indirectly
+    // fetch branches separately
+    const bRes  = await fetch(`${API}/medicines`); // public
+    // Use admin fetch for branches
+    const brRes = await Auth.fetch(`${API}/admin/dashboard`);
+    // Actually fetch branches via a direct public call
+    const resp  = await fetch(`${API}/medicines`);
+  } catch {}
+
+  /* Directly fetch branches from Supabase via our server */
+  try {
+    const res  = await Auth.fetch(`${API}/admin/inventory`);
+    const data = await res.json();
+    if (res.ok && data.length) {
+      const seen = new Set();
+      _branches  = data
+        .filter(i => { if (seen.has(i.branches?.name)) return false; seen.add(i.branches?.name); return true; })
+        .map(i => ({ id: i.branch_id, name: i.branches?.name }));
+    }
+  } catch {}
+
+  /* Fallback: fetch branches directly from /admin/branches */
+  if (!_branches.length) {
+    try {
+      const res  = await Auth.fetch('/admin/branches');
+      const data = await res.json();
+      if (res.ok && data.length) {
+        _branches = data.map(b => ({ id: b.branch_id, name: b.name, address: b.address, city: b.city }));
+      }
+    } catch {}
+  }
+
+  renderBranchSelect();
+  renderBranchesPanel();
+}
+
+function renderBranchSelect() {
+  const sel = document.getElementById('pos-branch');
+  sel.innerHTML = '<option value="">Select branch…</option>' +
+    _branches.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+}
+
+function renderBranchesPanel() {
+  const grid = document.getElementById('branches-grid');
+  if (!_branches.length) {
+    grid.innerHTML = '<div class="card"><p class="muted">No branch data. Run seed_inventory.sql in Supabase first.</p></div>';
+    return;
+  }
+  const now    = new Date();
+  const phHour = parseInt(new Intl.DateTimeFormat('en-PH', { hour:'numeric', hour12:false, timeZone:'Asia/Manila' }).format(now));
+  const phDay  = new Intl.DateTimeFormat('en-PH', { weekday:'short', timeZone:'Asia/Manila' }).format(now);
+  const isSat  = phDay === 'Sat', isSun = phDay === 'Sun';
+  let isOpen, hoursLabel, satLabel = '8:00 AM – 12:00 PM', weekLabel = '8:00 AM – 6:00 PM';
+  if (isSun)      { isOpen = false; hoursLabel = 'Closed today (Sunday)'; }
+  else if (isSat) { isOpen = phHour >= 8 && phHour < 12; hoursLabel = satLabel; }
+  else            { isOpen = phHour >= 8 && phHour < 18; hoursLabel = weekLabel; }
+
+  grid.innerHTML = _branches.map(b => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div>
+          <h3 style="margin:0 0 3px;font-size:16px;font-family:'Playfair Display',serif;color:var(--red);">🏥 ${esc(b.name)}</h3>
+          <div class="muted" style="font-size:12px;">${esc(b.city || 'Valenzuela City')}</div>
+        </div>
+        <span class="status-pill ${isOpen ? 'verified' : 'inactive'}">${isOpen ? '● Open Now' : '○ Closed'}</span>
+      </div>
+      <div class="info-row"><div class="info-icon">📍</div><div><div class="info-label">Address</div><div class="info-value">${esc(b.address || 'Valenzuela City')}</div></div></div>
+      <div class="info-row"><div class="info-icon">🕐</div><div><div class="info-label">Today's Hours</div><div class="info-value">${hoursLabel}</div></div></div>
+      <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Mon–Fri</div><div class="info-value">${weekLabel}</div></div></div>
+      <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Saturday</div><div class="info-value">${satLabel}</div></div></div>
+      <div class="info-row"><div class="info-icon">🚫</div><div><div class="info-label">Sunday</div><div class="info-value">Closed</div></div></div>
+    </div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════
+   USERS
+══════════════════════════════════════════ */
+async function loadUsers() {
+  const tbody = document.getElementById('users-tbody');
+  const label = document.getElementById('user-count-label');
+  try {
+    const res  = await Auth.fetch('/admin/users');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    document.getElementById('stat-users').textContent = data.length;
+    label.textContent = `${data.length} registered users`;
+
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">No users yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map((u, i) => `
+      <tr>
+        <td class="muted">${i + 1}</td>
+        <td><strong>${esc(u.full_name || '—')}</strong></td>
+        <td class="muted">${esc(u.email)}</td>
+        <td class="muted">${esc(u.phone || '—')}</td>
+        <td>${statusPill(u.role)}</td>
+        <td class="muted">${new Date(u.created_at).toLocaleDateString('en-PH')}</td>
+        <td>
+          ${u.role !== 'admin' ? `<button class="row-action" onclick="changeUserRole('${u.id}', 'pharmacist')">Make Staff</button>` : ''}
+          ${u.role !== 'customer' ? `<button class="row-action danger" onclick="changeUserRole('${u.id}', 'customer')">Revoke</button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--red);">⚠ ${err.message}</td></tr>`;
+  }
+}
+
+async function changeUserRole(userId, role) {
+  if (!confirm(`Change this user's role to "${role}"?`)) return;
+  const res = await Auth.fetch(`/admin/users/${userId}/role`, {
+    method: 'POST',
+    body: JSON.stringify({ role }),
+  });
+  if (res.ok) { showToast(`✓ Role updated to ${role}.`); loadUsers(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error); }
+}
+
+/* ══════════════════════════════════════════
+   PRODUCTS
+══════════════════════════════════════════ */
+async function loadProducts() {
+  try {
+    const res  = await Auth.fetch(`${API}/medicines`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    _medicines = data;
+    document.getElementById('stat-products').textContent = data.length;
+
+    const tbody = document.getElementById('products-tbody');
+    tbody.innerHTML = data.map(p => `
+      <tr>
+        <td><strong>${esc(p.name)}</strong></td>
+        <td>₱${parseFloat(p.unit_price).toFixed(2)}</td>
+        <td>${p.requires_rx
+          ? '<span class="status-pill pending">Rx</span>'
+          : '<span class="status-pill verified">OTC</span>'}</td>
+        <td>${p.same_day_available ? '✅ Yes' : '⏳ No'}</td>
+        <td class="muted">${esc(p.category || '—')}</td>
+        <td>${p.is_active
+          ? '<span class="status-pill active">Active</span>'
+          : '<span class="status-pill inactive">Inactive</span>'}</td>
+        <td>
+          <button class="row-action" onclick="openEditModal('${p.medicine_id}')">Edit</button>
+          <button class="row-action danger" onclick="deactivateProduct('${p.medicine_id}', '${esc(p.name)}')">Remove</button>
+        </td>
+      </tr>
+    `).join('');
+
+    renderPosProducts();
+  } catch (err) {
+    document.getElementById('products-tbody').innerHTML =
+      `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--red);">⚠ ${err.message}</td></tr>`;
+  }
+}
+
+async function deactivateProduct(id, name) {
+  if (!confirm(`Deactivate "${name}"? It will no longer appear in the catalogue.`)) return;
+  const res = await Auth.fetch(`${API}/medicines/${id}`, { method: 'DELETE' });
+  if (res.ok) { showToast('Product deactivated.'); loadProducts(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error); }
+}
+
+/* ══════════════════════════════════════════
+   PRESCRIPTIONS
+══════════════════════════════════════════ */
+async function loadPrescriptions() {
+  try {
+    const res  = await Auth.fetch(`${API}/prescriptions/pending`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    document.getElementById('rx-count-label').textContent = `${data.length} pending`;
+    document.getElementById('stat-pending').textContent   = data.length;
+
+    const tbody = document.getElementById('rx-tbody');
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">✓ No pending prescriptions.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(r => `
+      <tr>
+        <td><strong>${esc(r.profiles?.full_name || '—')}</strong><br><span class="muted">${esc(r.profiles?.phone || '')}</span></td>
+        <td class="muted">${esc(r.file_name || r.prescription_id.slice(0,8) + '…')}</td>
+        <td>${esc(r.branches?.name || '—')}</td>
+        <td class="muted">${new Date(r.uploaded_at).toLocaleString('en-PH')}</td>
+        <td>${statusPill(r.status)}</td>
+        <td>
+          <button class="row-action" onclick="viewRxFile('${r.prescription_id}')">View</button>
+          <button class="row-action" onclick="approveRx('${r.prescription_id}')">Approve</button>
+          <button class="row-action danger" onclick="rejectRx('${r.prescription_id}')">Reject</button>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('rx-tbody').innerHTML =
+      `<tr><td colspan="6" style="padding:24px;text-align:center;color:var(--red);">⚠ ${err.message}</td></tr>`;
+  }
+}
+
+async function viewRxFile(id) {
+  const res  = await Auth.fetch(`${API}/prescriptions/${id}/file`);
+  const data = await res.json();
+  if (res.ok) window.open(data.url, '_blank');
+  else showToast('⚠ Could not load file.');
+}
+
+async function approveRx(id) {
+  if (!confirm('Approve this prescription?')) return;
+  const res = await Auth.fetch(`${API}/prescriptions/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status: 'verified' }),
+  });
+  if (res.ok) { showToast('✓ Prescription approved!'); loadPrescriptions(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error); }
+}
+
+async function rejectRx(id) {
+  const reason = prompt('Reason for rejection:');
+  if (!reason) return;
+  const res = await Auth.fetch(`${API}/prescriptions/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status: 'rejected', rejection_reason: reason }),
+  });
+  if (res.ok) { showToast('Prescription rejected.'); loadPrescriptions(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error); }
+}
+
+/* ══════════════════════════════════════════
+   ORDERS
+══════════════════════════════════════════ */
+async function loadOrders() {
+  const status = document.getElementById('order-status-filter')?.value || '';
+  try {
+    let url = `${API}/orders/admin/all`;
+    if (status) url += `?status=${status}`;
+    const res  = await Auth.fetch(url);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    const tbody = document.getElementById('orders-tbody');
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">No orders found.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(o => `
+      <tr>
+        <td class="muted"><strong>${o.order_id.slice(0,8)}…</strong></td>
+        <td>${esc(o.profiles?.full_name || '—')}<br><span class="muted" style="font-size:11px;">${esc(o.profiles?.phone || '')}</span></td>
+        <td>${esc(o.branches?.name || '—')}</td>
+        <td>₱${parseFloat(o.total_amount).toFixed(2)}</td>
+        <td class="muted">${new Date(o.placed_at).toLocaleString('en-PH')}</td>
+        <td>${statusPill(o.status)}</td>
+        <td>
+          ${o.status === 'pending'   ? `<button class="row-action" onclick="updateOrderStatus('${o.order_id}','confirmed')">Confirm</button>` : ''}
+          ${o.status === 'confirmed' ? `<button class="row-action" onclick="updateOrderStatus('${o.order_id}','ready')">Mark Ready</button>` : ''}
+          ${o.status === 'ready'     ? `<button class="row-action" onclick="updateOrderStatus('${o.order_id}','completed')">Complete</button>` : ''}
+          ${['pending','confirmed'].includes(o.status) ? `<button class="row-action danger" onclick="updateOrderStatus('${o.order_id}','cancelled')">Cancel</button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    document.getElementById('orders-tbody').innerHTML =
+      `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--red);">⚠ ${err.message}</td></tr>`;
+  }
+}
+
+async function updateOrderStatus(id, status) {
+  const res = await Auth.fetch(`${API}/orders/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  });
+  if (res.ok) { showToast(`✓ Order marked as ${status}.`); loadOrders(); loadDashboard(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error); }
+}
+
+/* ══════════════════════════════════════════
+   POS SYSTEM
+══════════════════════════════════════════ */
+function renderPosProducts(filter = '') {
+  const grid = document.getElementById('pos-products-grid');
+  const list = _medicines.filter(m =>
+    m.is_active && (!filter || m.name.toLowerCase().includes(filter.toLowerCase()))
+  );
+
+  if (!list.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);">No medicines found.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(m => `
+    <button class="pos-product-btn ${m.requires_rx ? 'rx-item' : ''}"
+            onclick="addToPosCart('${m.medicine_id}', ${JSON.stringify(m.name).replace(/'/g,"\\'")} , ${m.unit_price}, ${m.requires_rx})">
+      <span class="pos-product-badge ${m.requires_rx ? 'status-pill pending' : 'status-pill verified'}">${m.requires_rx ? 'Rx' : 'OTC'}</span>
+      <span class="pos-product-name">${esc(m.name)}</span>
+      <span class="pos-product-price">₱${parseFloat(m.unit_price).toFixed(2)}</span>
+    </button>
+  `).join('');
+}
+
+function filterPosProducts(val) {
+  renderPosProducts(val);
+}
+
+function addToPosCart(id, name, price, requiresRx) {
+  const existing = posCart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    posCart.push({ id, name, price: parseFloat(price), requiresRx, qty: 1 });
+  }
+  renderPosCart();
+}
+
+function renderPosCart() {
+  const container = document.getElementById('pos-cart-items');
+  const countEl   = document.getElementById('pos-item-count');
+  const totalEl   = document.getElementById('pos-total');
+
+  if (!posCart.length) {
+    container.innerHTML = '<div class="pos-empty">No items added yet.<br>Click a product to add it.</div>';
+    countEl.textContent = '0 items';
+    totalEl.textContent = '₱0.00';
+    return;
+  }
+
+  const total = posCart.reduce((s, i) => s + i.price * i.qty, 0);
+  countEl.textContent = `${posCart.reduce((s,i) => s+i.qty, 0)} items`;
+  totalEl.textContent = `₱${total.toFixed(2)}`;
+
+  container.innerHTML = posCart.map(item => `
+    <div class="pos-cart-item">
+      <div style="flex:1;">
+        <div class="pos-item-name">${esc(item.name)} ${item.requiresRx ? '<span style="font-size:10px;color:var(--red);">Rx</span>' : ''}</div>
+        <div class="pos-item-price">₱${item.price.toFixed(2)} each</div>
+      </div>
+      <button class="pos-qty-btn" onclick="changePosQty('${item.id}', -1)">−</button>
+      <span class="pos-qty">${item.qty}</span>
+      <button class="pos-qty-btn" onclick="changePosQty('${item.id}', 1)">+</button>
+    </div>
+  `).join('');
+}
+
+function changePosQty(id, delta) {
+  const item = posCart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) posCart = posCart.filter(i => i.id !== id);
+  renderPosCart();
+}
+
+function clearPosCart() {
+  posCart = [];
+  posPayment = '';
+  document.querySelectorAll('.pos-payment-btn').forEach(b => b.classList.remove('selected'));
+  renderPosCart();
+}
+
+function selectPayment(btn) {
+  document.querySelectorAll('.pos-payment-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  posPayment = btn.dataset.method;
+}
+
+async function processSale() {
+  if (!posCart.length)  { showToast('⚠ Add items to the cart first.'); return; }
+  if (!posPayment)      { showToast('⚠ Select a payment method.'); return; }
+  const branchId = document.getElementById('pos-branch').value;
+  if (!branchId)        { showToast('⚠ Select a branch.'); return; }
+
+  const btn = document.getElementById('pos-process-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Processing…';
+
+  try {
+    const items = posCart.map(i => ({ medicine_id: i.id, quantity: i.qty }));
+    const res   = await Auth.fetch(`${API}/orders`, {
+      method: 'POST',
+      body: JSON.stringify({ branch_id: branchId, items, notes: `POS sale · Payment: ${posPayment}` }),
+    });
+    const data  = await res.json();
+
+    if (!res.ok) throw new Error(data.error);
+
+    /* Mark immediately as completed (walk-in = instant sale) */
+    await Auth.fetch(`${API}/orders/${data.order_id}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'completed' }),
+    });
+
+    showReceipt(data.order_id, branchId);
+    clearPosCart();
+    loadDashboard();
+
+  } catch (err) {
+    showToast('⚠ ' + err.message);
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = 'Process Sale →';
+  }
+}
+
+function showReceipt(orderId, branchId) {
+  const branch  = _branches.find(b => b.id === branchId);
+  const total   = posCart.reduce((s, i) => s + i.price * i.qty, 0);
+  const now     = new Date().toLocaleString('en-PH');
+  const items   = [...posCart]; // snapshot before clear
+
+  document.getElementById('receipt-body').innerHTML = `
+    <div class="receipt-row" style="border:none;padding-bottom:4px;">
+      <span style="color:var(--muted);">Branch</span>
+      <span>${esc(branch?.name || 'Branch')}</span>
+    </div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;">
+      <span style="color:var(--muted);">Date &amp; Time</span>
+      <span>${now}</span>
+    </div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;">
+      <span style="color:var(--muted);">Payment</span>
+      <span style="text-transform:capitalize;">${posPayment}</span>
+    </div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;">
+      <span style="color:var(--muted);">Order ID</span>
+      <span style="font-size:11px;">${orderId.slice(0,8)}…</span>
+    </div>
+    <div style="border-top:1px dashed var(--border);margin:10px 0;"></div>
+    ${items.map(i => `
+      <div class="receipt-row">
+        <span>${esc(i.name)} × ${i.qty}</span>
+        <span>₱${(i.price * i.qty).toFixed(2)}</span>
+      </div>
+    `).join('')}
+    <div style="border-top:2px solid var(--border);margin:10px 0;"></div>
+    <div class="receipt-total">
+      <span>TOTAL</span>
+      <span>₱${total.toFixed(2)}</span>
+    </div>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);">
+      Thank you for your purchase!<br>
+      Angel's Pharmacy — Valenzuela City
+    </div>
+  `;
+  document.getElementById('receipt-overlay').classList.add('open');
+}
+
+function closeReceipt() {
+  document.getElementById('receipt-overlay').classList.remove('open');
+}
+
+function printReceipt() {
+  window.print();
+}
+
+/* ══════════════════════════════════════════
+   EDIT PRODUCT MODAL
+══════════════════════════════════════════ */
+function openAddProductModal() {
+  document.getElementById('edit-id').value      = '';
+  document.getElementById('edit-name').value    = '';
+  document.getElementById('edit-price').value   = '';
+  document.getElementById('edit-rx').value      = 'false';
+  document.getElementById('edit-sameday').value = 'true';
+  document.getElementById('edit-title').textContent = 'Add New Product';
+  document.getElementById('edit-overlay').classList.add('open');
+}
+
+function openEditModal(id) {
+  const p = _medicines.find(m => m.medicine_id === id);
+  if (!p) return;
+  document.getElementById('edit-id').value      = id;
+  document.getElementById('edit-name').value    = p.name;
+  document.getElementById('edit-price').value   = p.unit_price;
+  document.getElementById('edit-rx').value      = String(p.requires_rx);
+  document.getElementById('edit-sameday').value = String(p.same_day_available);
+  document.getElementById('edit-title').textContent = 'Edit — ' + p.name;
+  document.getElementById('edit-overlay').classList.add('open');
+}
+
+function closeEditModal() { document.getElementById('edit-overlay').classList.remove('open'); }
+function handleEditOverlay(e) { if (e.target === document.getElementById('edit-overlay')) closeEditModal(); }
+
+async function saveEdit() {
+  const id    = document.getElementById('edit-id').value;
+  const body  = {
+    name:               document.getElementById('edit-name').value.trim(),
+    unit_price:         parseFloat(document.getElementById('edit-price').value),
+    requires_rx:        document.getElementById('edit-rx').value === 'true',
+    same_day_available: document.getElementById('edit-sameday').value === 'true',
+  };
+
+  if (id) {
+    /* Update existing */
+    const res = await Auth.fetch(`${API}/medicines/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+    if (res.ok) { showToast('✓ Product updated.'); closeEditModal(); loadProducts(); }
+    else { const d = await res.json(); showToast('⚠ ' + d.error); }
+  } else {
+    /* Create new */
+    const res = await Auth.fetch(`${API}/medicines`, { method: 'POST', body: JSON.stringify(body) });
+    if (res.ok) { showToast('✓ Product added.'); closeEditModal(); loadProducts(); }
+    else { const d = await res.json(); showToast('⚠ ' + d.error); }
+  }
+}
+
+/* ══════════════════════════════════════════
+   PANEL SWITCHING
+══════════════════════════════════════════ */
+const panelTitles = {
+  dashboard: 'Dashboard', pos: '🧾 Point of Sale',
+  users: 'Users', products: 'Products',
+  prescriptions: 'Prescriptions', orders: 'Orders',
+  branches: 'Branches', settings: 'Settings',
+};
+
+function switchPanel(name, btn) {
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  if (btn)   btn.classList.add('active');
+  document.getElementById('topbar-title').textContent = panelTitles[name] || name;
+  document.getElementById('sidebar').classList.remove('open');
+
+  /* Refresh data when switching to a panel */
+  if (name === 'prescriptions') loadPrescriptions();
+  if (name === 'orders')        loadOrders();
+  if (name === 'pos')           renderPosProducts();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function statusPill(s) {
+  const map = {
+    pending:   ['pending',   '⏳ Pending'],
+    confirmed: ['ready',     '✓ Confirmed'],
+    verified:  ['verified',  '✓ Verified'],
+    ready:     ['ready',     '📦 Ready'],
+    completed: ['completed', '✅ Completed'],
+    cancelled: ['cancelled', '✕ Cancelled'],
+    active:    ['active',    '● Active'],
+    inactive:  ['inactive',  '✕ Inactive'],
+    rejected:  ['cancelled', '✕ Rejected'],
+  };
+  const [cls, label] = map[s] || ['inactive', s];
+  return `<span class="status-pill ${cls}">${label}</span>`;
+}
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function showToast(msg, duration = 3500) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+</script>
+</body>
+</html>
