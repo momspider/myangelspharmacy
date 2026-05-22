@@ -7,7 +7,7 @@
 
 const Auth = (() => {
 
-  const API           = '/api';  // change to your domain in production
+  const API           = '';  // change to your domain in production
   const ACCESS_KEY    = 'ap_access_token';
   const REFRESH_KEY   = 'ap_refresh_token';
   const USER_KEY      = 'ap_user';
