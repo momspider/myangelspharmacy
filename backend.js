@@ -663,3 +663,13 @@ function escapeHtml(s) {
     .replaceAll('"',  "&quot;")
     .replaceAll("'",  "&#039;");
 }
+
+window._addToCart = function(btn) {
+  const product = {
+    id:         btn.dataset.id,
+    name:       btn.dataset.name,
+    price:      parseFloat(btn.dataset.price),
+    requiresRx: btn.dataset.rx === 'true'
+  };
+  addToCart(product);
+};
