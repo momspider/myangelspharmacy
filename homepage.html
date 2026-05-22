@@ -469,7 +469,7 @@
       formData.append('branch_id', branchEl.value); // Note: backend needs real UUID — see below
 
       const token = sessionStorage.getItem('ap_access_token');
-      const res   = await fetch('http://localhost:3000/api/prescriptions', {
+      const res   = await fetch('/api/prescriptions', {
         method:  'POST',
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body:    formData,

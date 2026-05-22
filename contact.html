@@ -243,7 +243,7 @@
     btn.textContent = 'Sending…';
 
     try {
-      const res  = await fetch('http://localhost:3000/api/admin/contacts', {
+      const res  = await fetch('/api/admin/contacts', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ full_name: name, email, phone, branch, message: msg }),
