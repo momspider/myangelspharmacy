@@ -624,7 +624,7 @@ async function loadBranches() {
   /* Fallback: fetch branches directly from /admin/branches */
   if (!_branches.length) {
     try {
-      const res  = await Auth.fetch('/admin/branches');
+      const res  = await Auth.fetch(`${API}/admin/branches`)
       const data = await res.json();
       if (res.ok && data.length) {
         _branches = data.map(b => ({ id: b.branch_id, name: b.name, address: b.address, city: b.city }));
