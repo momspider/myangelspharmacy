@@ -11,6 +11,9 @@ import ordersRoutes        from './routes/orders.js';
 import prescriptionsRoutes from './routes/prescriptions.js';
 import adminRoutes         from './routes/admin.js';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
@@ -54,6 +57,16 @@ app.use('/api/medicines',     medicinesRoutes);
 app.use('/api/orders',        ordersRoutes);
 app.use('/api/prescriptions', prescriptionsRoutes);
 app.use('/api/admin',         adminRoutes);
+
+/* ── STATIC FILES ────────────────────────────────────────────────── */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+app.use(express.static(path.join(__dirname, '..')));
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
 
 /* ── HEALTH CHECK ────────────────────────────────────────────────── */
 app.get('/api/health', (_req, res) => {
