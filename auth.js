@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════════
-   auth.js — Angel's Pharmacy · Frontend Auth Module (Supabase edition)
-   Replaces the old localStorage-based auth.
-   Storage  : sessionStorage for access token (tab-scoped)
-              localStorage  for refresh token (persists across tabs)
-   ═══════════════════════════════════════════════════════════════════ */
+
 
 const Auth = (() => {
 
