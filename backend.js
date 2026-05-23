@@ -508,10 +508,10 @@ function renderCartDrawer() {
 
 async function placeOrder() {
 
-   const branchMap = {
-  punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
-  malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
-};
+  const branchMap = {
+    punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
+    malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
+  };
 
   const branchEl = document.getElementById("cart-branch");
   const branch   = branchEl ? branchEl.value : "";
