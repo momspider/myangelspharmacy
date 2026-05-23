@@ -517,18 +517,23 @@ async function placeOrder() {
   if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
 
   try {
-    const res  = await Auth.fetch('/orders', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        branch_id: branch,
-        items: state.cart.map(i => ({
-          medicine_id: i.id,
-          quantity:    i.qty,
-          unit_price:  i.price,
-        })),
-      }),
-    });
+    const branchMap = {
+  punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
+  malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
+};
+
+const res = await Auth.fetch('/orders', {
+  method:  'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body:    JSON.stringify({
+    branch_id: branchMap[branch] || branch,
+    items: state.cart.map(i => ({
+      medicine_id: i.id,
+      quantity:    i.qty,
+      unit_price:  i.price,
+    })),
+  }),
+});
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Order failed.');
 
