@@ -93,7 +93,7 @@ function setupUpload() {
     setVerificationState("uploaded");
   });
 
- requestBtn.addEventListener("click", async () => {
+requestBtn.addEventListener("click", async () => {
   if (!state.prescription) { showToast("Please upload a prescription first."); return; }
 
   const rxFile = document.getElementById("rx-file");
@@ -125,33 +125,35 @@ function setupUpload() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Upload failed.");
 
-   setVerificationState("uploaded");
-showToast("✓ Prescription submitted! Awaiting pharmacist verification.");
+    state.prescription.id = data.prescription_id;
 
-const prescriptionId = data.prescription_id;
-const pollInterval = setInterval(async () => {
-  try {
-    const statusRes = await Auth.fetch('/prescriptions');
-    const prescriptions = await statusRes.json();
-    const current = prescriptions.find(p => p.prescription_id === prescriptionId);
-    if (current) {
-      if (current.status === 'verified') {
-        setVerificationState("verified");
-        showToast("✓ Prescription verified by pharmacist!");
-        clearInterval(pollInterval);
-      } else if (current.status === 'rejected') {
-        showToast("⚠ Prescription rejected: " + (current.rejection_reason || "No reason given."));
-        clearInterval(pollInterval);
-      }
-    }
-  } catch {}
-}, 5000);
-} catch (err) {
-  showToast("⚠ " + err.message);
-} finally {
-  requestBtn.textContent = "Request Verification";
-  requestBtn.disabled    = false;
-}
+    setVerificationState("uploaded");
+    showToast("✓ Prescription submitted! Awaiting pharmacist verification.");
+
+    const prescriptionId = data.prescription_id;
+    const pollInterval = setInterval(async () => {
+      try {
+        const statusRes = await Auth.fetch('/prescriptions');
+        const prescriptions = await statusRes.json();
+        const current = prescriptions.find(p => p.prescription_id === prescriptionId);
+        if (current) {
+          if (current.status === 'verified') {
+            setVerificationState("verified");
+            showToast("✓ Prescription verified by pharmacist!");
+            clearInterval(pollInterval);
+          } else if (current.status === 'rejected') {
+            showToast("⚠ Prescription rejected: " + (current.rejection_reason || "No reason given."));
+            clearInterval(pollInterval);
+          }
+        }
+      } catch {}
+    }, 5000);
+  } catch (err) {
+    showToast("⚠ " + err.message);
+  } finally {
+    requestBtn.textContent = "Request Verification";
+    requestBtn.disabled    = false;
+  }
 });
 
   viewOcrBtn.addEventListener("click", () => {
@@ -532,7 +534,6 @@ function renderCartDrawer() {
 }
 
 async function placeOrder() {
-
   const branchMap = {
     punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
     malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
@@ -540,8 +541,6 @@ async function placeOrder() {
 
   const branchEl = document.getElementById("cart-branch");
   const branch   = branchEl ? branchEl.value : "";
-  console.log("Branch value:", JSON.stringify(branch));
-  console.log("Branch map result:", branchMap[branch]);
   if (!branch) { showToast("Please select a pick-up branch."); return; }
 
   if (!state.cart.length) { showToast("Your cart is empty."); return; }
@@ -549,20 +548,22 @@ async function placeOrder() {
   const btn = document.getElementById("place-order-btn");
   if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
 
-  try {
+  const prescription_id = state.prescription?.id || null;
 
-const res = await Auth.fetch('/orders', {
-  method:  'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body:    JSON.stringify({
-    branch_id: branchMap[branch] || branch,
-    items: state.cart.map(i => ({
-      medicine_id: i.id,
-      quantity:    i.qty,
-      unit_price:  i.price,
-    })),
-  }),
-});
+  try {
+    const res = await Auth.fetch('/orders', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        branch_id: branchMap[branch] || branch,
+        prescription_id,
+        items: state.cart.map(i => ({
+          medicine_id: i.id,
+          quantity:    i.qty,
+          unit_price:  i.price,
+        })),
+      }),
+    });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Order failed.');
 
@@ -577,6 +578,7 @@ const res = await Auth.fetch('/orders', {
     if (btn) { btn.textContent = "Place Order →"; btn.disabled = false; }
   }
 }
+
 /* ── QUICK REFILL ─────────────────────────────────────────── */
 
 function setupQuickRefill() {
