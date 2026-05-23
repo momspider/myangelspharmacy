@@ -509,6 +509,8 @@ function renderCartDrawer() {
 async function placeOrder() {
   const branchEl = document.getElementById("cart-branch");
   const branch   = branchEl ? branchEl.value : "";
+  console.log("Branch value:", JSON.stringify(branch));
+  console.log("Branch map result:", branchMap[branch]);
   if (!branch) { showToast("Please select a pick-up branch."); return; }
 
   if (!state.cart.length) { showToast("Your cart is empty."); return; }
