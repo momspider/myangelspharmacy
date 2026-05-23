@@ -370,40 +370,43 @@
 
   /* ── ✅ Load my orders from real API ── */
   async function loadMyOrders() {
-    const container = document.getElementById('my-orders');
-    try {
-      const res  = await Auth.fetch('/orders/admin/all')
-      const data = await res.json();
+  const container = document.getElementById('my-orders');
+  try {
+    const res  = await Auth.fetch('/orders');
+    const data = await res.json();
 
-      if (!res.ok || data.length === 0) {
-        container.innerHTML = '<div class="small muted">No orders yet.</div>';
-        return;
-      }
-
-      const statusColors = {
-        pending:   'var(--muted)',
-        confirmed: '#1565C0',
-        ready:     '#2e7d32',
-        completed: '#4caf50',
-        cancelled: 'var(--red)',
-      };
-
-      container.innerHTML = data.slice(0, 5).map(order => `
-        <div style="padding:10px 0;border-bottom:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="font-size:13px;font-weight:600;">${order.branches?.name || 'Branch'}</div>
-            <span style="font-size:12px;font-weight:700;color:${statusColors[order.status] || 'var(--muted)'};">
-              ${order.status.toUpperCase()}
-            </span>
-          </div>
-          <div class="small muted">${new Date(order.placed_at).toLocaleDateString('en-PH')} · ₱${parseFloat(order.total_amount).toFixed(2)}</div>
-        </div>
-      `).join('');
-
-    } catch (err) {
-      container.innerHTML = '<div class="small muted">Could not load orders.</div>';
+    if (!res.ok || data.length === 0) {
+      container.innerHTML = '<div class="small muted">No orders yet.</div>';
+      return;
     }
+
+    const statusColors = {
+      pending:   'var(--muted)',
+      confirmed: '#1565C0',
+      ready:     '#2e7d32',
+      completed: '#4caf50',
+      cancelled: 'var(--red)',
+    };
+
+    container.innerHTML = data.slice(0, 5).map(order => `
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:13px;font-weight:600;">${order.branches?.name || 'Branch'}</div>
+          <span style="font-size:12px;font-weight:700;color:${statusColors[order.status] || 'var(--muted)'};">
+            ${order.status.toUpperCase()}
+          </span>
+        </div>
+        <div class="small muted">${new Date(order.placed_at).toLocaleDateString('en-PH')} · ₱${parseFloat(order.total_amount).toFixed(2)}</div>
+      </div>
+    `).join('');
+
+    // Poll for status updates every 10 seconds
+    setTimeout(loadMyOrders, 10000);
+
+  } catch (err) {
+    container.innerHTML = '<div class="small muted">Could not load orders.</div>';
   }
+}
 
   /* ── Search & filter listeners ── */
   let searchTimer;
