@@ -507,6 +507,12 @@ function renderCartDrawer() {
 }
 
 async function placeOrder() {
+
+   const branchMap = {
+  punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
+  malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
+};
+
   const branchEl = document.getElementById("cart-branch");
   const branch   = branchEl ? branchEl.value : "";
   console.log("Branch value:", JSON.stringify(branch));
@@ -519,10 +525,6 @@ async function placeOrder() {
   if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
 
   try {
-    const branchMap = {
-  punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
-  malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
-};
 
 const res = await Auth.fetch('/orders', {
   method:  'POST',
