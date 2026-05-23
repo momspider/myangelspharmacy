@@ -93,7 +93,7 @@ function setupUpload() {
     setVerificationState("uploaded");
   });
 
-  requestBtn.addEventListener("click", async () => {
+ requestBtn.addEventListener("click", async () => {
   if (!state.prescription) { showToast("Please upload a prescription first."); return; }
 
   const rxFile = document.getElementById("rx-file");
@@ -104,15 +104,20 @@ function setupUpload() {
   requestBtn.textContent = "Requesting…";
 
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("branch", state.selectedBranch || "punturin");
+    const branchMap = {
+      punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
+      malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
+    };
 
-    const token = Auth.getSession ? Auth.getSession()?.access_token : null;
+    const formData = new FormData();
+    formData.append("prescription", file);
+    formData.append("branch_id", branchMap[state.selectedBranch || "punturin"]);
+
+    const token = sessionStorage.getItem("ap_access_token");
     const headers = {};
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    const res  = await fetch("/api/prescriptions/upload", {
+    const res  = await fetch("/api/prescriptions", {
       method:  "POST",
       headers,
       body:    formData,
@@ -129,6 +134,7 @@ function setupUpload() {
     requestBtn.disabled    = false;
   }
 });
+
   viewOcrBtn.addEventListener("click", () => {
     if (!state.prescription) { showToast("No OCR result available."); return; }
     const p = state.prescription.parsed;
