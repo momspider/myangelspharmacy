@@ -93,22 +93,42 @@ function setupUpload() {
     setVerificationState("uploaded");
   });
 
-  requestBtn.addEventListener("click", () => {
-    if (!state.prescription) { showToast("Please upload a prescription first."); return; }
-    requestBtn.disabled    = true;
-    requestBtn.textContent = "Requesting\u2026";
-    setTimeout(() => {
-      setVerificationState("verified");
-      showToast("\u2713 Prescription verified by pharmacist!");
-      setTimeout(() => {
-        setVerificationState("dispensed");
-        showToast("\u2713 Order is ready for pick-up at your selected branch.");
-        requestBtn.textContent = "Request Verification";
-        requestBtn.disabled    = false;
-      }, 1500);
-    }, 1600);
-  });
+  requestBtn.addEventListener("click", async () => {
+  if (!state.prescription) { showToast("Please upload a prescription first."); return; }
 
+  const rxFile = document.getElementById("rx-file");
+  const file   = rxFile.files && rxFile.files[0];
+  if (!file) { showToast("Please upload a prescription file."); return; }
+
+  requestBtn.disabled    = true;
+  requestBtn.textContent = "Requesting…";
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("branch", state.selectedBranch || "punturin");
+
+    const token = Auth.getSession ? Auth.getSession()?.access_token : null;
+    const headers = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const res  = await fetch("/api/prescriptions/upload", {
+      method:  "POST",
+      headers,
+      body:    formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Upload failed.");
+
+    setVerificationState("uploaded");
+    showToast("✓ Prescription submitted! Awaiting pharmacist verification.");
+  } catch (err) {
+    showToast("⚠ " + err.message);
+  } finally {
+    requestBtn.textContent = "Request Verification";
+    requestBtn.disabled    = false;
+  }
+});
   viewOcrBtn.addEventListener("click", () => {
     if (!state.prescription) { showToast("No OCR result available."); return; }
     const p = state.prescription.parsed;
