@@ -486,24 +486,43 @@ function renderCartDrawer() {
   if (subtotalEl) subtotalEl.textContent = "\u20B1" + total.toFixed(2);
 }
 
-function placeOrder() {
+async function placeOrder() {
   const branchEl = document.getElementById("cart-branch");
   const branch   = branchEl ? branchEl.value : "";
   if (!branch) { showToast("Please select a pick-up branch."); return; }
 
-  const btn = document.getElementById("place-order-btn");
-  if (btn) { btn.textContent = "Placing order\u2026"; btn.disabled = true; }
+  if (!state.cart.length) { showToast("Your cart is empty."); return; }
 
-  setTimeout(() => {
+  const btn = document.getElementById("place-order-btn");
+  if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
+
+  try {
+    const res  = await Auth.fetch('/orders', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        branch_id: branch,
+        items: state.cart.map(i => ({
+          medicine_id: i.id,
+          quantity:    i.qty,
+          unit_price:  i.price,
+        })),
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Order failed.');
+
     const branchName = branch === "punturin" ? "Punturin" : "Malinta";
     state.cart = [];
     updateCartUI();
     closeCart();
-    showToast("\u2713 Order placed! Ready for pick-up at " + branchName + " Branch.", 4500);
-    if (btn) { btn.textContent = "Place Order \u2192"; btn.disabled = false; }
-  }, 1200);
+    showToast("✓ Order placed! Ready for pick-up at " + branchName + " Branch.", 4500);
+  } catch (err) {
+    showToast("⚠ " + err.message);
+  } finally {
+    if (btn) { btn.textContent = "Place Order →"; btn.disabled = false; }
+  }
 }
-
 /* ── QUICK REFILL ─────────────────────────────────────────── */
 
 function setupQuickRefill() {
