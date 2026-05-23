@@ -125,14 +125,33 @@ function setupUpload() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Upload failed.");
 
-    setVerificationState("uploaded");
-    showToast("✓ Prescription submitted! Awaiting pharmacist verification.");
-  } catch (err) {
-    showToast("⚠ " + err.message);
-  } finally {
-    requestBtn.textContent = "Request Verification";
-    requestBtn.disabled    = false;
-  }
+   setVerificationState("uploaded");
+showToast("✓ Prescription submitted! Awaiting pharmacist verification.");
+
+const prescriptionId = data.prescription_id;
+const pollInterval = setInterval(async () => {
+  try {
+    const statusRes = await Auth.fetch('/prescriptions');
+    const prescriptions = await statusRes.json();
+    const current = prescriptions.find(p => p.prescription_id === prescriptionId);
+    if (current) {
+      if (current.status === 'verified') {
+        setVerificationState("verified");
+        showToast("✓ Prescription verified by pharmacist!");
+        clearInterval(pollInterval);
+      } else if (current.status === 'rejected') {
+        showToast("⚠ Prescription rejected: " + (current.rejection_reason || "No reason given."));
+        clearInterval(pollInterval);
+      }
+    }
+  } catch {}
+}, 5000);
+} catch (err) {
+  showToast("⚠ " + err.message);
+} finally {
+  requestBtn.textContent = "Request Verification";
+  requestBtn.disabled    = false;
+}
 });
 
   viewOcrBtn.addEventListener("click", () => {
