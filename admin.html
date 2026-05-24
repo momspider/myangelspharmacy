@@ -39,6 +39,8 @@
     .sidebar-link:hover { background: rgba(255,255,255,0.1); color: white; }
     .sidebar-link.active { background: rgba(255,255,255,0.18); color: white; font-weight: 700; }
     .sidebar-link .ico { font-size: 16px; flex-shrink: 0; }
+    .sidebar-link.staff-hidden { display: none; }
+    .sidebar-section.staff-hidden { display: none; }
     .sidebar-footer { padding: 14px 10px; border-top: 1px solid rgba(255,255,255,0.1); }
     .admin-badge { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.08); }
     .admin-avatar { width: 32px; height: 32px; border-radius: 99px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: white; flex-shrink: 0; }
@@ -54,6 +56,7 @@
     .topbar-title { font-weight: 700; font-size: 15px; color: var(--text); }
     .topbar-right { display: flex; align-items: center; gap: 10px; }
     .topbar-pill { background: var(--red-light); color: var(--red); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 99px; letter-spacing: 0.03em; }
+    .topbar-pill.staff { background: #e3f2fd; color: #1565c0; }
     .admin-content { padding: 24px; }
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: white; border-radius: 14px; padding: 18px 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; align-items: flex-start; gap: 14px; }
@@ -82,9 +85,12 @@
     .status-pill.cancelled { background: #fde8eb; color: var(--red); }
     .status-pill.active    { background: #e8f5e9; color: #2e7d32; }
     .status-pill.inactive  { background: #f3f4f6; color: #6b7280; }
+    .status-pill.staff-pill { background: #e3f2fd; color: #1565c0; }
     .row-action { background: transparent; border: 1px solid var(--border); padding: 4px 10px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--text-sub); transition: all 0.15s; margin-right: 4px; }
     .row-action:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
     .row-action.danger:hover { border-color: #b45309; color: #b45309; background: #fff3e0; }
+    .row-action.make-staff { border-color: #90caf9; color: #1565c0; background: #e3f2fd; }
+    .row-action.make-staff:hover { border-color: #1565c0; background: #bbdefb; color: #0d47a1; }
     .admin-panel { display: none; }
     .admin-panel.active { display: block; }
     .stock-bar-wrap { display: flex; align-items: center; gap: 8px; }
@@ -114,38 +120,16 @@
     .activity-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
     /* ── POS STYLES ── */
-    .pos-shell {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 20px;
-      min-height: calc(100vh - 108px);
-    }
+    .pos-shell { display: grid; grid-template-columns: 1fr 340px; gap: 20px; min-height: calc(100vh - 108px); }
     @media (max-width: 900px) { .pos-shell { grid-template-columns: 1fr; } }
-    .pos-products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 12px;
-      align-content: start;
-    }
-    .pos-product-btn {
-      background: white; border: 1.5px solid var(--border);
-      border-radius: 14px; padding: 14px 12px;
-      cursor: pointer; transition: border-color .18s, box-shadow .18s, transform .18s;
-      text-align: left; font-family: inherit;
-      display: flex; flex-direction: column; gap: 6px;
-    }
+    .pos-products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; align-content: start; }
+    .pos-product-btn { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 12px; cursor: pointer; transition: border-color .18s, box-shadow .18s, transform .18s; text-align: left; font-family: inherit; display: flex; flex-direction: column; gap: 6px; }
     .pos-product-btn:hover { border-color: var(--red-mid); box-shadow: var(--shadow); transform: translateY(-2px); }
     .pos-product-btn.rx-item { border-left: 3px solid var(--red); }
     .pos-product-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
     .pos-product-price { font-size: 15px; font-weight: 800; color: var(--red); }
     .pos-product-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; display: inline-block; }
-    .pos-cart {
-      background: white; border-radius: 16px;
-      border: 1px solid var(--border); box-shadow: var(--shadow-sm);
-      display: flex; flex-direction: column;
-      position: sticky; top: 80px;
-      max-height: calc(100vh - 100px);
-    }
+    .pos-cart { background: white; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; position: sticky; top: 80px; max-height: calc(100vh - 100px); }
     .pos-cart-header { padding: 16px 18px 12px; border-bottom: 1px solid var(--border); }
     .pos-cart-header h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--text); }
     .pos-cart-items { flex: 1; overflow-y: auto; padding: 10px 18px; }
@@ -169,8 +153,6 @@
     .pos-process-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(192,21,42,0.4); }
     .pos-process-btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .pos-empty { text-align: center; padding: 32px 20px; color: var(--muted); font-size: 13px; }
-
-    /* ── Receipt modal ── */
     .receipt-overlay { display: none; position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; padding: 20px; }
     .receipt-overlay.open { display: flex; }
     .receipt-modal { background: white; border-radius: 18px; padding: 0; width: min(400px, 95vw); box-shadow: var(--shadow-lg); overflow: hidden; }
@@ -198,21 +180,21 @@
     <div class="sidebar-brand">
       <div class="brand-icon" style="width:38px;height:38px;font-size:15px;margin-bottom:10px;">A+</div>
       <div class="sidebar-title">Angel's Pharmacy</div>
-      <div class="sidebar-sub">Admin Panel</div>
+      <div class="sidebar-sub" id="sidebar-role-label">Admin Panel</div>
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section">Overview</div>
       <button class="sidebar-link active" data-panel="dashboard" onclick="switchPanel('dashboard',this)">
         <span class="ico">📊</span> Dashboard
       </button>
-      <div class="sidebar-section">Management</div>
-      <button class="sidebar-link" data-panel="pos" onclick="switchPanel('pos',this)">
+      <div class="sidebar-section staff-hidden" id="nav-section-management">Management</div>
+      <button class="sidebar-link staff-hidden" id="nav-pos" data-panel="pos" onclick="switchPanel('pos',this)">
         <span class="ico">🧾</span> POS
       </button>
-      <button class="sidebar-link" data-panel="users" onclick="switchPanel('users',this)">
+      <button class="sidebar-link staff-hidden" id="nav-users" data-panel="users" onclick="switchPanel('users',this)">
         <span class="ico">👥</span> Users
       </button>
-      <button class="sidebar-link" data-panel="products" onclick="switchPanel('products',this)">
+      <button class="sidebar-link staff-hidden" id="nav-products" data-panel="products" onclick="switchPanel('products',this)">
         <span class="ico">💊</span> Products
       </button>
       <button class="sidebar-link" data-panel="prescriptions" onclick="switchPanel('prescriptions',this)">
@@ -249,7 +231,7 @@
         <div class="topbar-title" id="topbar-title">Dashboard</div>
       </div>
       <div class="topbar-right">
-        <span class="topbar-pill">🛡️ Admin Access</span>
+        <span class="topbar-pill" id="access-pill">🛡️ Admin Access</span>
         <button class="btn" onclick="Auth.logOut()" style="font-size:12px;padding:7px 14px;">Sign Out</button>
       </div>
     </div>
@@ -285,8 +267,8 @@
           </div>
         </div>
         <div class="section-header"><h2>Quick Actions</h2></div>
-        <div class="qa-grid">
-          <div class="qa-card" onclick="switchPanel('pos', document.querySelector('[data-panel=pos]'))">
+        <div class="qa-grid" id="qa-grid">
+          <div class="qa-card admin-only-qa" onclick="switchPanel('pos', document.querySelector('[data-panel=pos]'))">
             <div class="qa-ico">🧾</div>
             <div class="qa-label">Open POS</div>
             <div class="qa-desc">Process walk-in sales at the counter.</div>
@@ -301,7 +283,7 @@
             <div class="qa-label">Orders Queue</div>
             <div class="qa-desc">View and manage pick-up orders.</div>
           </div>
-          <div class="qa-card" onclick="switchPanel('products', document.querySelector('[data-panel=products]'))">
+          <div class="qa-card admin-only-qa" onclick="switchPanel('products', document.querySelector('[data-panel=products]'))">
             <div class="qa-ico">💊</div>
             <div class="qa-label">Manage Products</div>
             <div class="qa-desc">Edit prices and availability.</div>
@@ -321,23 +303,17 @@
           <h2>🧾 Point of Sale</h2>
           <span class="muted" style="font-size:13px;">Walk-in counter sales</span>
         </div>
-
-        <!-- Search bar -->
         <div style="margin-bottom:16px;">
           <input id="pos-search" type="search" placeholder="Search medicines…"
                  style="width:100%;max-width:400px;"
                  oninput="filterPosProducts(this.value)" />
         </div>
-
         <div class="pos-shell">
-          <!-- Product grid -->
           <div>
             <div class="pos-products-grid" id="pos-products-grid">
               <div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);">Loading products…</div>
             </div>
           </div>
-
-          <!-- Cart -->
           <div class="pos-cart">
             <div class="pos-cart-header">
               <h3>🛒 Current Sale</h3>
@@ -347,29 +323,22 @@
               <div class="pos-empty">No items added yet.<br>Click a product to add it.</div>
             </div>
             <div class="pos-cart-footer">
-              <!-- Branch -->
               <select class="pos-branch-select" id="pos-branch">
                 <option value="">Select branch…</option>
               </select>
-              <!-- Payment methods -->
               <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;">PAYMENT METHOD</div>
               <div class="pos-payment-methods">
-                <button class="pos-payment-btn" data-method="cash"   onclick="selectPayment(this)">💵 Cash</button>
-                <button class="pos-payment-btn" data-method="gcash"  onclick="selectPayment(this)">📱 GCash</button>
-                <button class="pos-payment-btn" data-method="maya"   onclick="selectPayment(this)">💜 Maya</button>
-                <button class="pos-payment-btn" data-method="card"   onclick="selectPayment(this)">💳 Card</button>
+                <button class="pos-payment-btn" data-method="cash"  onclick="selectPayment(this)">💵 Cash</button>
+                <button class="pos-payment-btn" data-method="gcash" onclick="selectPayment(this)">📱 GCash</button>
+                <button class="pos-payment-btn" data-method="maya"  onclick="selectPayment(this)">💜 Maya</button>
+                <button class="pos-payment-btn" data-method="card"  onclick="selectPayment(this)">💳 Card</button>
               </div>
-              <!-- Total -->
               <div class="pos-total">
                 <span class="pos-total-label">TOTAL</span>
                 <span class="pos-total-amount" id="pos-total">₱0.00</span>
               </div>
-              <button class="pos-process-btn" id="pos-process-btn" onclick="processSale()">
-                Process Sale →
-              </button>
-              <button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px;" onclick="clearPosCart()">
-                Clear Cart
-              </button>
+              <button class="pos-process-btn" id="pos-process-btn" onclick="processSale()">Process Sale →</button>
+              <button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px;" onclick="clearPosCart()">Clear Cart</button>
             </div>
           </div>
         </div>
@@ -472,9 +441,9 @@
           <div class="info-row"><div class="info-icon">🏛️</div><div><div class="info-label">Regulatory Body</div><div class="info-value">Department of Health (DOH), Philippines</div></div></div>
         </div>
         <div class="card" style="max-width:600px;margin-top:16px;">
-          <h3 style="margin:0 0 16px;font-size:15px;">Admin Account</h3>
+          <h3 style="margin:0 0 16px;font-size:15px;">My Account</h3>
           <div class="info-row"><div class="info-icon">📧</div><div><div class="info-label">Email</div><div class="info-value" id="settings-email">—</div></div></div>
-          <div class="info-row"><div class="info-icon">🔖</div><div><div class="info-label">Role</div><div class="info-value">Administrator</div></div></div>
+          <div class="info-row"><div class="info-icon">🔖</div><div><div class="info-label">Role</div><div class="info-value" id="settings-role">—</div></div></div>
         </div>
       </div>
 
@@ -533,30 +502,72 @@ const API = '';
 
 /* ── State ── */
 let _adminUser  = null;
+let _userRole   = null;   // 'admin' | 'pharmacist'
 let _branches   = [];
 let _medicines  = [];
 let posCart     = [];
 let posPayment  = '';
 
-/* ── Boot ── */
+/* ══════════════════════════════════════════
+   BOOT — allow both admin and staff
+══════════════════════════════════════════ */
 (async () => {
-  _adminUser = await Auth.requireAdmin();
-  if (!_adminUser) return;
+  /* Try admin first; if it redirects/throws, fall back to session check for staff */
+  const session = Auth.getSession();
+  if (!session) { window.location.replace('index.html'); return; }
 
-  /* Populate admin info in sidebar */
+  _userRole = session.role;
+
+  /* Only admin and staff may enter */
+  if (_userRole !== 'admin' && _userRole !== 'pharmacist') {
+    window.location.replace('homepage.html');
+    return;
+  }
+
+  /* For admin route, still call requireAdmin so server-side checks run */
+  if (_userRole === 'admin') {
+    _adminUser = await Auth.requireAdmin();
+    if (!_adminUser) return;
+  } else {
+    /* Staff: just use session profile */
+    _adminUser = session;
+  }
+
+  /* Populate sidebar identity */
   const name = _adminUser.full_name || _adminUser.email;
   document.getElementById('admin-avatar').textContent = name.charAt(0).toUpperCase();
   document.getElementById('admin-name').textContent   = name;
   document.getElementById('admin-email').textContent  = _adminUser.email;
   document.getElementById('settings-email').textContent = _adminUser.email;
+  document.getElementById('settings-role').textContent  =
+    _userRole === 'admin' ? 'Administrator' : 'Staff';
 
-  /* Load everything */
+  /* Apply staff restrictions if needed */
+  if (_userRole === 'pharmacist') applyStaffMode();
+
+  /* Load data */
   await Promise.all([loadDashboard(), loadBranches()]);
-  loadUsers();
-  loadProducts();
+  if (_userRole === 'admin') { loadUsers(); loadProducts(); }
   loadPrescriptions();
   loadOrders();
 })();
+
+/* ══════════════════════════════════════════
+   STAFF MODE — hide admin-only areas
+══════════════════════════════════════════ */
+function applyStaffMode() {
+  /* Sidebar label + topbar pill */
+  document.getElementById('sidebar-role-label').textContent = 'Staff Panel';
+  const pill = document.getElementById('access-pill');
+  pill.textContent = '👤 Staff Access';
+  pill.classList.add('staff');
+
+  /* Hide sidebar links and section headers for: POS, Users, Products */
+  document.querySelectorAll('.staff-hidden').forEach(el => el.style.display = 'none');
+
+  /* Hide quick-action cards that are admin-only */
+  document.querySelectorAll('.admin-only-qa').forEach(el => el.style.display = 'none');
+}
 
 /* ══════════════════════════════════════════
    DASHBOARD
@@ -566,7 +577,6 @@ async function loadDashboard() {
     const res  = await Auth.fetch(`${API}/admin/dashboard`);
     const data = await res.json();
     if (!res.ok) return;
-
     const orders = data.orders || {};
     const total  = Object.values(orders).reduce((s, v) => s + v, 0);
     document.getElementById('stat-orders').textContent   = total;
@@ -575,7 +585,6 @@ async function loadDashboard() {
     document.getElementById('stat-revenue').textContent  = '₱' + parseFloat(data.revenue_last_30_days || 0).toLocaleString('en-PH', {minimumFractionDigits:2});
   } catch {}
 
-  /* Activity feed — recent orders */
   try {
     const res  = await Auth.fetch(`${API}/orders/admin/all`);
     const data = await res.json();
@@ -600,17 +609,6 @@ async function loadDashboard() {
 ══════════════════════════════════════════ */
 async function loadBranches() {
   try {
-    const res  = await Auth.fetch(`${API}/medicines`); // branches come from medicines route indirectly
-    // fetch branches separately
-    const bRes  = await fetch(`${API}/medicines`); // public
-    // Use admin fetch for branches
-    const brRes = await Auth.fetch(`${API}/admin/dashboard`);
-    // Actually fetch branches via a direct public call
-    const resp  = await fetch(`${API}/medicines`);
-  } catch {}
-
-  /* Directly fetch branches from Supabase via our server */
-  try {
     const res  = await Auth.fetch(`${API}/admin/inventory`);
     const data = await res.json();
     if (res.ok && data.length) {
@@ -620,18 +618,14 @@ async function loadBranches() {
         .map(i => ({ id: i.branch_id, name: i.branches?.name }));
     }
   } catch {}
-
-  /* Fallback: fetch branches directly from /admin/branches */
   if (!_branches.length) {
     try {
-      const res  = await Auth.fetch(`${API}/admin/branches`)
+      const res  = await Auth.fetch(`${API}/admin/branches`);
       const data = await res.json();
-      if (res.ok && data.length) {
+      if (res.ok && data.length)
         _branches = data.map(b => ({ id: b.branch_id, name: b.name, address: b.address, city: b.city }));
-      }
     } catch {}
   }
-
   renderBranchSelect();
   renderBranchesPanel();
 }
@@ -652,10 +646,10 @@ function renderBranchesPanel() {
   const phHour = parseInt(new Intl.DateTimeFormat('en-PH', { hour:'numeric', hour12:false, timeZone:'Asia/Manila' }).format(now));
   const phDay  = new Intl.DateTimeFormat('en-PH', { weekday:'short', timeZone:'Asia/Manila' }).format(now);
   const isSat  = phDay === 'Sat', isSun = phDay === 'Sun';
-  let isOpen, hoursLabel, satLabel = '8:00 AM – 12:00 PM', weekLabel = '8:00 AM – 6:00 PM';
+  let isOpen, hoursLabel;
   if (isSun)      { isOpen = false; hoursLabel = 'Closed today (Sunday)'; }
-  else if (isSat) { isOpen = phHour >= 8 && phHour < 12; hoursLabel = satLabel; }
-  else            { isOpen = phHour >= 8 && phHour < 18; hoursLabel = weekLabel; }
+  else if (isSat) { isOpen = phHour >= 8 && phHour < 12; hoursLabel = '8:00 AM – 12:00 PM'; }
+  else            { isOpen = phHour >= 8 && phHour < 18; hoursLabel = '8:00 AM – 6:00 PM'; }
 
   grid.innerHTML = _branches.map(b => `
     <div class="card">
@@ -668,15 +662,15 @@ function renderBranchesPanel() {
       </div>
       <div class="info-row"><div class="info-icon">📍</div><div><div class="info-label">Address</div><div class="info-value">${esc(b.address || 'Valenzuela City')}</div></div></div>
       <div class="info-row"><div class="info-icon">🕐</div><div><div class="info-label">Today's Hours</div><div class="info-value">${hoursLabel}</div></div></div>
-      <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Mon–Fri</div><div class="info-value">${weekLabel}</div></div></div>
-      <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Saturday</div><div class="info-value">${satLabel}</div></div></div>
+      <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Mon–Fri</div><div class="info-value">8:00 AM – 6:00 PM</div></div></div>
+      <div class="info-row"><div class="info-icon">📅</div><div><div class="info-label">Saturday</div><div class="info-value">8:00 AM – 12:00 PM</div></div></div>
       <div class="info-row"><div class="info-icon">🚫</div><div><div class="info-label">Sunday</div><div class="info-value">Closed</div></div></div>
     </div>
   `).join('');
 }
 
 /* ══════════════════════════════════════════
-   USERS
+   USERS  (admin only)
 ══════════════════════════════════════════ */
 async function loadUsers() {
   const tbody = document.getElementById('users-tbody');
@@ -694,37 +688,62 @@ async function loadUsers() {
       return;
     }
 
-    tbody.innerHTML = data.map((u, i) => `
-      <tr>
-        <td class="muted">${i + 1}</td>
-        <td><strong>${esc(u.full_name || '—')}</strong></td>
-        <td class="muted">${esc(u.email)}</td>
-        <td class="muted">${esc(u.phone || '—')}</td>
-        <td>${statusPill(u.role)}</td>
-        <td class="muted">${new Date(u.created_at).toLocaleDateString('en-PH')}</td>
-        <td>
-          ${u.role !== 'admin' ? `<button class="row-action" onclick="changeUserRole('${u.id}', 'pharmacist')">Make Staff</button>` : ''}
-          ${u.role !== 'customer' ? `<button class="row-action danger" onclick="changeUserRole('${u.id}', 'customer')">Revoke</button>` : ''}
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = data.map((u, i) => {
+      const isAdmin    = u.role === 'admin';
+      const isStaff    = u.role === 'pharmacist';
+      const isCustomer = u.role === 'customer';
+
+      /* Build action buttons */
+      let actions = '';
+      if (isCustomer) {
+        actions += `<button class="row-action make-staff" onclick="changeUserRole('${u.id}','pharmacist')">👤 Make Staff</button>`;
+      }
+      if (isStaff) {
+        actions += `<button class="row-action danger" onclick="changeUserRole('${u.id}','customer')" title="Revoke staff access">✕ Revoke Staff</button>`;
+      }
+      if (!isAdmin && !isCustomer) {
+        /* no promote-to-admin from here */
+      }
+
+      return `
+        <tr>
+          <td class="muted">${i + 1}</td>
+          <td><strong>${esc(u.full_name || '—')}</strong></td>
+          <td class="muted">${esc(u.email)}</td>
+          <td class="muted">${esc(u.phone || '—')}</td>
+          <td>${statusPill(u.role)}</td>
+          <td class="muted">${new Date(u.created_at).toLocaleDateString('en-PH')}</td>
+          <td>${actions || '<span class="muted" style="font-size:11px;">—</span>'}</td>
+        </tr>
+      `;
+    }).join('');
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--red);">⚠ ${err.message}</td></tr>`;
   }
 }
 
 async function changeUserRole(userId, role) {
-  if (!confirm(`Change this user's role to "${role}"?`)) return;
-  const res = await Auth.fetch(`/admin/users/${userId}/role`, {
-    method: 'POST',
-    body: JSON.stringify({ role }),
-  });
-  if (res.ok) { showToast(`✓ Role updated to ${role}.`); loadUsers(); }
-  else { const d = await res.json(); showToast('⚠ ' + d.error); }
+  const label = role === 'pharmacist' ? 'grant staff access to' : 'revoke staff access from';
+  if (!confirm(`Are you sure you want to ${label} this user?`)) return;
+  try {
+    const res = await Auth.fetch(`/admin/users/${userId}/role`, {
+      method: 'POST',
+      body: JSON.stringify({ role }),
+    });
+    if (res.ok) {
+      showToast(role === 'pharmacist' ? '✓ Staff access granted.' : '✓ Staff access revoked.');
+      loadUsers();
+    } else {
+      const d = await res.json();
+      showToast('⚠ ' + d.error);
+    }
+  } catch (err) {
+    showToast('⚠ ' + err.message);
+  }
 }
 
 /* ══════════════════════════════════════════
-   PRODUCTS
+   PRODUCTS  (admin only)
 ══════════════════════════════════════════ */
 async function loadProducts() {
   try {
@@ -740,17 +759,13 @@ async function loadProducts() {
       <tr>
         <td><strong>${esc(p.name)}</strong></td>
         <td>₱${parseFloat(p.unit_price).toFixed(2)}</td>
-        <td>${p.requires_rx
-          ? '<span class="status-pill pending">Rx</span>'
-          : '<span class="status-pill verified">OTC</span>'}</td>
+        <td>${p.requires_rx ? '<span class="status-pill pending">Rx</span>' : '<span class="status-pill verified">OTC</span>'}</td>
         <td>${p.same_day_available ? '✅ Yes' : '⏳ No'}</td>
         <td class="muted">${esc(p.category || '—')}</td>
-        <td>${p.is_active
-          ? '<span class="status-pill active">Active</span>'
-          : '<span class="status-pill inactive">Inactive</span>'}</td>
+        <td>${p.is_active ? '<span class="status-pill active">Active</span>' : '<span class="status-pill inactive">Inactive</span>'}</td>
         <td>
           <button class="row-action" onclick="openEditModal('${p.medicine_id}')">Edit</button>
-          <button class="row-action danger" onclick="deactivateProduct('${p.medicine_id}', '${esc(p.name)}')">Remove</button>
+          <button class="row-action danger" onclick="deactivateProduct('${p.medicine_id}','${esc(p.name)}')">Remove</button>
         </td>
       </tr>
     `).join('');
@@ -812,24 +827,16 @@ async function viewRxFile(id) {
   if (res.ok) window.open(data.url, '_blank');
   else showToast('⚠ Could not load file.');
 }
-
 async function approveRx(id) {
   if (!confirm('Approve this prescription?')) return;
-  const res = await Auth.fetch(`${API}/prescriptions/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ status: 'verified' }),
-  });
+  const res = await Auth.fetch(`${API}/prescriptions/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'verified' }) });
   if (res.ok) { showToast('✓ Prescription approved!'); loadPrescriptions(); }
   else { const d = await res.json(); showToast('⚠ ' + d.error); }
 }
-
 async function rejectRx(id) {
   const reason = prompt('Reason for rejection:');
   if (!reason) return;
-  const res = await Auth.fetch(`${API}/prescriptions/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ status: 'rejected', rejection_reason: reason }),
-  });
+  const res = await Auth.fetch(`${API}/prescriptions/${id}`, { method: 'PATCH', body: JSON.stringify({ status: 'rejected', rejection_reason: reason }) });
   if (res.ok) { showToast('Prescription rejected.'); loadPrescriptions(); }
   else { const d = await res.json(); showToast('⚠ ' + d.error); }
 }
@@ -874,10 +881,7 @@ async function loadOrders() {
 }
 
 async function updateOrderStatus(id, status) {
-  const res = await Auth.fetch(`${API}/orders/${id}/status`, {
-    method: 'PATCH',
-    body: JSON.stringify({ status }),
-  });
+  const res = await Auth.fetch(`${API}/orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
   if (res.ok) { showToast(`✓ Order marked as ${status}.`); loadOrders(); loadDashboard(); }
   else { const d = await res.json(); showToast('⚠ ' + d.error); }
 }
@@ -887,15 +891,8 @@ async function updateOrderStatus(id, status) {
 ══════════════════════════════════════════ */
 function renderPosProducts(filter = '') {
   const grid = document.getElementById('pos-products-grid');
-  const list = _medicines.filter(m =>
-    m.is_active && (!filter || m.name.toLowerCase().includes(filter.toLowerCase()))
-  );
-
-  if (!list.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);">No medicines found.</div>';
-    return;
-  }
-
+  const list = _medicines.filter(m => m.is_active && (!filter || m.name.toLowerCase().includes(filter.toLowerCase())));
+  if (!list.length) { grid.innerHTML = '<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);">No medicines found.</div>'; return; }
   grid.innerHTML = list.map(m => `
     <button class="pos-product-btn ${m.requires_rx ? 'rx-item' : ''}"
             onclick="addToPosCart('${m.medicine_id}', ${JSON.stringify(m.name).replace(/'/g,"\\'")} , ${m.unit_price}, ${m.requires_rx})">
@@ -905,37 +902,24 @@ function renderPosProducts(filter = '') {
     </button>
   `).join('');
 }
-
-function filterPosProducts(val) {
-  renderPosProducts(val);
-}
-
+function filterPosProducts(val) { renderPosProducts(val); }
 function addToPosCart(id, name, price, requiresRx) {
   const existing = posCart.find(i => i.id === id);
-  if (existing) {
-    existing.qty++;
-  } else {
-    posCart.push({ id, name, price: parseFloat(price), requiresRx, qty: 1 });
-  }
+  if (existing) existing.qty++;
+  else posCart.push({ id, name, price: parseFloat(price), requiresRx, qty: 1 });
   renderPosCart();
 }
-
 function renderPosCart() {
   const container = document.getElementById('pos-cart-items');
   const countEl   = document.getElementById('pos-item-count');
   const totalEl   = document.getElementById('pos-total');
-
   if (!posCart.length) {
     container.innerHTML = '<div class="pos-empty">No items added yet.<br>Click a product to add it.</div>';
-    countEl.textContent = '0 items';
-    totalEl.textContent = '₱0.00';
-    return;
+    countEl.textContent = '0 items'; totalEl.textContent = '₱0.00'; return;
   }
-
   const total = posCart.reduce((s, i) => s + i.price * i.qty, 0);
   countEl.textContent = `${posCart.reduce((s,i) => s+i.qty, 0)} items`;
   totalEl.textContent = `₱${total.toFixed(2)}`;
-
   container.innerHTML = posCart.map(item => `
     <div class="pos-cart-item">
       <div style="flex:1;">
@@ -948,7 +932,6 @@ function renderPosCart() {
     </div>
   `).join('');
 }
-
 function changePosQty(id, delta) {
   const item = posCart.find(i => i.id === id);
   if (!item) return;
@@ -956,157 +939,85 @@ function changePosQty(id, delta) {
   if (item.qty <= 0) posCart = posCart.filter(i => i.id !== id);
   renderPosCart();
 }
-
 function clearPosCart() {
-  posCart = [];
-  posPayment = '';
+  posCart = []; posPayment = '';
   document.querySelectorAll('.pos-payment-btn').forEach(b => b.classList.remove('selected'));
   renderPosCart();
 }
-
 function selectPayment(btn) {
   document.querySelectorAll('.pos-payment-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  posPayment = btn.dataset.method;
+  btn.classList.add('selected'); posPayment = btn.dataset.method;
 }
-
 async function processSale() {
   if (!posCart.length)  { showToast('⚠ Add items to the cart first.'); return; }
   if (!posPayment)      { showToast('⚠ Select a payment method.'); return; }
   const branchId = document.getElementById('pos-branch').value;
   if (!branchId)        { showToast('⚠ Select a branch.'); return; }
-
   const btn = document.getElementById('pos-process-btn');
-  btn.disabled    = true;
-  btn.textContent = 'Processing…';
-
+  btn.disabled = true; btn.textContent = 'Processing…';
   try {
     const items = posCart.map(i => ({ medicine_id: i.id, quantity: i.qty }));
-    const res   = await Auth.fetch(`${API}/orders`, {
-      method: 'POST',
-      body: JSON.stringify({ branch_id: branchId, items, notes: `POS sale · Payment: ${posPayment}` }),
-    });
+    const res   = await Auth.fetch(`${API}/orders`, { method: 'POST', body: JSON.stringify({ branch_id: branchId, items, notes: `POS sale · Payment: ${posPayment}` }) });
     const data  = await res.json();
-
     if (!res.ok) throw new Error(data.error);
-
-    /* Mark immediately as completed (walk-in = instant sale) */
-    await Auth.fetch(`${API}/orders/${data.order_id}/status`, {
-      method: 'PATCH',
-      body: JSON.stringify({ status: 'completed' }),
-    });
-
+    await Auth.fetch(`${API}/orders/${data.order_id}/status`, { method: 'PATCH', body: JSON.stringify({ status: 'completed' }) });
     showReceipt(data.order_id, branchId);
-    clearPosCart();
-    loadDashboard();
-
+    clearPosCart(); loadDashboard();
   } catch (err) {
     showToast('⚠ ' + err.message);
   } finally {
-    btn.disabled    = false;
-    btn.textContent = 'Process Sale →';
+    btn.disabled = false; btn.textContent = 'Process Sale →';
   }
 }
-
 function showReceipt(orderId, branchId) {
-  const branch  = _branches.find(b => b.id === branchId);
-  const total   = posCart.reduce((s, i) => s + i.price * i.qty, 0);
-  const now     = new Date().toLocaleString('en-PH');
-  const items   = [...posCart]; // snapshot before clear
-
+  const branch = _branches.find(b => b.id === branchId);
+  const total  = posCart.reduce((s, i) => s + i.price * i.qty, 0);
+  const items  = [...posCart];
   document.getElementById('receipt-body').innerHTML = `
-    <div class="receipt-row" style="border:none;padding-bottom:4px;">
-      <span style="color:var(--muted);">Branch</span>
-      <span>${esc(branch?.name || 'Branch')}</span>
-    </div>
-    <div class="receipt-row" style="border:none;padding-bottom:4px;">
-      <span style="color:var(--muted);">Date &amp; Time</span>
-      <span>${now}</span>
-    </div>
-    <div class="receipt-row" style="border:none;padding-bottom:4px;">
-      <span style="color:var(--muted);">Payment</span>
-      <span style="text-transform:capitalize;">${posPayment}</span>
-    </div>
-    <div class="receipt-row" style="border:none;padding-bottom:4px;">
-      <span style="color:var(--muted);">Order ID</span>
-      <span style="font-size:11px;">${orderId.slice(0,8)}…</span>
-    </div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;"><span style="color:var(--muted);">Branch</span><span>${esc(branch?.name || 'Branch')}</span></div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;"><span style="color:var(--muted);">Date &amp; Time</span><span>${new Date().toLocaleString('en-PH')}</span></div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;"><span style="color:var(--muted);">Payment</span><span style="text-transform:capitalize;">${posPayment}</span></div>
+    <div class="receipt-row" style="border:none;padding-bottom:4px;"><span style="color:var(--muted);">Order ID</span><span style="font-size:11px;">${orderId.slice(0,8)}…</span></div>
     <div style="border-top:1px dashed var(--border);margin:10px 0;"></div>
-    ${items.map(i => `
-      <div class="receipt-row">
-        <span>${esc(i.name)} × ${i.qty}</span>
-        <span>₱${(i.price * i.qty).toFixed(2)}</span>
-      </div>
-    `).join('')}
+    ${items.map(i => `<div class="receipt-row"><span>${esc(i.name)} × ${i.qty}</span><span>₱${(i.price * i.qty).toFixed(2)}</span></div>`).join('')}
     <div style="border-top:2px solid var(--border);margin:10px 0;"></div>
-    <div class="receipt-total">
-      <span>TOTAL</span>
-      <span>₱${total.toFixed(2)}</span>
-    </div>
-    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);">
-      Thank you for your purchase!<br>
-      Angel's Pharmacy — Valenzuela City
-    </div>
+    <div class="receipt-total"><span>TOTAL</span><span>₱${total.toFixed(2)}</span></div>
+    <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);">Thank you for your purchase!<br>Angel's Pharmacy — Valenzuela City</div>
   `;
   document.getElementById('receipt-overlay').classList.add('open');
 }
-
-function closeReceipt() {
-  document.getElementById('receipt-overlay').classList.remove('open');
-}
-
-function printReceipt() {
-  window.print();
-}
+function closeReceipt() { document.getElementById('receipt-overlay').classList.remove('open'); }
+function printReceipt() { window.print(); }
 
 /* ══════════════════════════════════════════
    EDIT PRODUCT MODAL
 ══════════════════════════════════════════ */
 function openAddProductModal() {
-  document.getElementById('edit-id').value      = '';
-  document.getElementById('edit-name').value    = '';
-  document.getElementById('edit-price').value   = '';
-  document.getElementById('edit-rx').value      = 'false';
+  document.getElementById('edit-id').value = ''; document.getElementById('edit-name').value = '';
+  document.getElementById('edit-price').value = ''; document.getElementById('edit-rx').value = 'false';
   document.getElementById('edit-sameday').value = 'true';
   document.getElementById('edit-title').textContent = 'Add New Product';
   document.getElementById('edit-overlay').classList.add('open');
 }
-
 function openEditModal(id) {
   const p = _medicines.find(m => m.medicine_id === id);
   if (!p) return;
-  document.getElementById('edit-id').value      = id;
-  document.getElementById('edit-name').value    = p.name;
-  document.getElementById('edit-price').value   = p.unit_price;
-  document.getElementById('edit-rx').value      = String(p.requires_rx);
+  document.getElementById('edit-id').value = id; document.getElementById('edit-name').value = p.name;
+  document.getElementById('edit-price').value = p.unit_price; document.getElementById('edit-rx').value = String(p.requires_rx);
   document.getElementById('edit-sameday').value = String(p.same_day_available);
   document.getElementById('edit-title').textContent = 'Edit — ' + p.name;
   document.getElementById('edit-overlay').classList.add('open');
 }
-
 function closeEditModal() { document.getElementById('edit-overlay').classList.remove('open'); }
 function handleEditOverlay(e) { if (e.target === document.getElementById('edit-overlay')) closeEditModal(); }
-
 async function saveEdit() {
-  const id    = document.getElementById('edit-id').value;
-  const body  = {
-    name:               document.getElementById('edit-name').value.trim(),
-    unit_price:         parseFloat(document.getElementById('edit-price').value),
-    requires_rx:        document.getElementById('edit-rx').value === 'true',
-    same_day_available: document.getElementById('edit-sameday').value === 'true',
-  };
-
-  if (id) {
-    /* Update existing */
-    const res = await Auth.fetch(`${API}/medicines/${id}`, { method: 'PUT', body: JSON.stringify(body) });
-    if (res.ok) { showToast('✓ Product updated.'); closeEditModal(); loadProducts(); }
-    else { const d = await res.json(); showToast('⚠ ' + d.error); }
-  } else {
-    /* Create new */
-    const res = await Auth.fetch(`${API}/medicines`, { method: 'POST', body: JSON.stringify(body) });
-    if (res.ok) { showToast('✓ Product added.'); closeEditModal(); loadProducts(); }
-    else { const d = await res.json(); showToast('⚠ ' + d.error); }
-  }
+  const id   = document.getElementById('edit-id').value;
+  const body = { name: document.getElementById('edit-name').value.trim(), unit_price: parseFloat(document.getElementById('edit-price').value), requires_rx: document.getElementById('edit-rx').value === 'true', same_day_available: document.getElementById('edit-sameday').value === 'true' };
+  const url  = id ? `${API}/medicines/${id}` : `${API}/medicines`;
+  const meth = id ? 'PUT' : 'POST';
+  const res  = await Auth.fetch(url, { method: meth, body: JSON.stringify(body) });
+  if (res.ok) { showToast(id ? '✓ Product updated.' : '✓ Product added.'); closeEditModal(); loadProducts(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error); }
 }
 
 /* ══════════════════════════════════════════
@@ -1120,6 +1031,10 @@ const panelTitles = {
 };
 
 function switchPanel(name, btn) {
+  /* Staff guard — block restricted panels */
+  const staffBlocked = ['pos', 'users', 'products'];
+  if (_userRole === 'pharmacist' && staffBlocked.includes(name)) return;
+
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   const panel = document.getElementById('panel-' + name);
@@ -1127,31 +1042,30 @@ function switchPanel(name, btn) {
   if (btn)   btn.classList.add('active');
   document.getElementById('topbar-title').textContent = panelTitles[name] || name;
   document.getElementById('sidebar').classList.remove('open');
-
-  /* Refresh data when switching to a panel */
   if (name === 'prescriptions') loadPrescriptions();
   if (name === 'orders')        loadOrders();
   if (name === 'pos')           renderPosProducts();
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-}
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
 /* ══════════════════════════════════════════
    HELPERS
 ══════════════════════════════════════════ */
 function statusPill(s) {
   const map = {
-    pending:   ['pending',   '⏳ Pending'],
-    confirmed: ['ready',     '✓ Confirmed'],
-    verified:  ['verified',  '✓ Verified'],
-    ready:     ['ready',     '📦 Ready'],
-    completed: ['completed', '✅ Completed'],
-    cancelled: ['cancelled', '✕ Cancelled'],
-    active:    ['active',    '● Active'],
-    inactive:  ['inactive',  '✕ Inactive'],
-    rejected:  ['cancelled', '✕ Rejected'],
+    admin:     ['staff-pill',  '🛡️ Admin'],
+    pharmacist:['staff-pill',  '👤 Staff'],
+    customer:  ['inactive',    '👤 Customer'],
+    pending:   ['pending',     '⏳ Pending'],
+    confirmed: ['ready',       '✓ Confirmed'],
+    verified:  ['verified',    '✓ Verified'],
+    ready:     ['ready',       '📦 Ready'],
+    completed: ['completed',   '✅ Completed'],
+    cancelled: ['cancelled',   '✕ Cancelled'],
+    active:    ['active',      '● Active'],
+    inactive:  ['inactive',    '✕ Inactive'],
+    rejected:  ['cancelled',   '✕ Rejected'],
   };
   const [cls, label] = map[s] || ['inactive', s];
   return `<span class="status-pill ${cls}">${label}</span>`;
@@ -1165,8 +1079,7 @@ function esc(s) {
 function showToast(msg, duration = 3500) {
   const t = document.getElementById('toast');
   if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), duration);
 }
 </script>
