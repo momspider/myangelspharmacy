@@ -138,7 +138,8 @@ requestBtn.addEventListener("click", async () => {
         const current = prescriptions.find(p => p.prescription_id === prescriptionId);
         if (current) {
           if (current.status === 'verified') {
-            setVerificationState("verified");
+  state.prescription.status = 'verified';
+  setVerificationState("verified");
             showToast("✓ Prescription verified by pharmacist!");
             clearInterval(pollInterval);
           } else if (current.status === 'rejected') {
@@ -546,16 +547,22 @@ async function placeOrder() {
   if (!state.cart.length) { showToast("Your cart is empty."); return; }
 
   // Check if cart has Rx items
-  const hasRx = state.cart.some(i => i.requiresRx);
-  if (hasRx && (!state.prescription || !state.prescription.id)) {
-    showToast("⚠ Please upload and verify a prescription for Rx medicines.");
+ const hasRx = state.cart.some(i => i.requiresRx);
+if (hasRx) {
+  if (!state.prescription || !state.prescription.id) {
+    showToast("⚠ Please upload a prescription for Rx medicines.");
     return;
   }
+  if (state.prescription.status !== 'verified') {
+    showToast("⚠ Your prescription is still pending pharmacist verification.");
+    return;
+  }
+}
 
-  const btn = document.getElementById("place-order-btn");
-  if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
+const btn = document.getElementById("place-order-btn");
+if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
 
-  const prescription_id = state.prescription?.id || null;
+const prescription_id = state.prescription?.id || null;
 
   try {
     const res = await Auth.fetch('/orders', {
