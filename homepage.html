@@ -369,7 +369,7 @@
   }
 
   /* ── ✅ Load my orders from real API ── */
-  async function loadMyOrders() {
+ async function loadMyOrders() {
   const container = document.getElementById('my-orders');
   try {
     const res  = await Auth.fetch('/orders');
@@ -401,10 +401,12 @@
       </div>
     `).join('');
 
-    // Light up "Ready for pick-up" dot if any order is ready
-    const hasReady = data.some(o => o.status === 'ready' || o.status === 'completed');
-    if (hasReady) {
-      setVerificationState('dispensed');
+    const latestOrder = data[0];
+    if (latestOrder.status === 'ready' || latestOrder.status === 'completed') {
+      const dispensedEl = document.getElementById('st-dispensed');
+      const dispensedDot = document.getElementById('dot-dispensed');
+      if (dispensedEl) dispensedEl.style.opacity = '1';
+      if (dispensedDot) dispensedDot.classList.add('lit');
       showToast('✓ Your order is ready for pick-up!');
     }
 

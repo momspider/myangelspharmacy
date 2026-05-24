@@ -545,6 +545,13 @@ async function placeOrder() {
 
   if (!state.cart.length) { showToast("Your cart is empty."); return; }
 
+  // Check if cart has Rx items
+  const hasRx = state.cart.some(i => i.requiresRx);
+  if (hasRx && (!state.prescription || !state.prescription.id)) {
+    showToast("⚠ Please upload and verify a prescription for Rx medicines.");
+    return;
+  }
+
   const btn = document.getElementById("place-order-btn");
   if (btn) { btn.textContent = "Placing order…"; btn.disabled = true; }
 
