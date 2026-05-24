@@ -377,6 +377,7 @@
 
     if (!res.ok || data.length === 0) {
       container.innerHTML = '<div class="small muted">No orders yet.</div>';
+      setTimeout(loadMyOrders, 10000);
       return;
     }
 
@@ -400,11 +401,18 @@
       </div>
     `).join('');
 
-    // Poll for status updates every 10 seconds
+    // Light up "Ready for pick-up" dot if any order is ready
+    const hasReady = data.some(o => o.status === 'ready' || o.status === 'completed');
+    if (hasReady) {
+      setVerificationState('dispensed');
+      showToast('✓ Your order is ready for pick-up!');
+    }
+
     setTimeout(loadMyOrders, 10000);
 
   } catch (err) {
     container.innerHTML = '<div class="small muted">Could not load orders.</div>';
+    setTimeout(loadMyOrders, 10000);
   }
 }
 
