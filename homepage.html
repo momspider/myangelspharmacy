@@ -369,7 +369,7 @@
   }
 
   /* ── ✅ Load my orders from real API ── */
- async function loadMyOrders() {
+  async function loadMyOrders() {
   const container = document.getElementById('my-orders');
   try {
     const res  = await Auth.fetch('/orders');
@@ -377,7 +377,6 @@
 
     if (!res.ok || data.length === 0) {
       container.innerHTML = '<div class="small muted">No orders yet.</div>';
-      setTimeout(loadMyOrders, 10000);
       return;
     }
 
@@ -401,20 +400,11 @@
       </div>
     `).join('');
 
-    const latestOrder = data[0];
-    if (latestOrder.status === 'ready' || latestOrder.status === 'completed') {
-      const dispensedEl = document.getElementById('st-dispensed');
-      const dispensedDot = document.getElementById('dot-dispensed');
-      if (dispensedEl) dispensedEl.style.opacity = '1';
-      if (dispensedDot) dispensedDot.classList.add('lit');
-      showToast('✓ Your order is ready for pick-up!');
-    }
-
+    // Poll for status updates every 10 seconds
     setTimeout(loadMyOrders, 10000);
 
   } catch (err) {
     container.innerHTML = '<div class="small muted">Could not load orders.</div>';
-    setTimeout(loadMyOrders, 10000);
   }
 }
 
@@ -472,16 +462,21 @@
     const file     = document.getElementById('rx-file').files[0];
     const branchEl = document.querySelector('input[name="branch"]:checked');
 
-    if (!file) { showToast('Please select a prescription file first.'); return; }
+    if (!file)     { showToast('Please select a prescription file first.'); return; }
     if (!branchEl) { showToast('Please select a branch first.'); return; }
 
     this.disabled    = true;
     this.textContent = 'Uploading…';
 
     try {
+      const branchMap = {
+        punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
+        malinta:  "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
+      };
+
       const formData = new FormData();
       formData.append('prescription', file);
-      formData.append('branch_id', branchEl.value); // Note: backend needs real UUID — see below
+      formData.append('branch_id', branchMap[branchEl.value]);
 
       const token = sessionStorage.getItem('ap_access_token');
       const res   = await fetch('/api/prescriptions', {
@@ -490,13 +485,42 @@
         body:    formData,
       });
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || 'Upload failed.');
 
-      // Update verification status
-      document.getElementById('st-verified').style.opacity = '0.6';
-      showToast('✓ Prescription uploaded! A pharmacist will review it shortly.');
+      // Save prescription ID to state for placeOrder
+      if (typeof state !== 'undefined') {
+        state.prescription = state.prescription || {};
+        state.prescription.id = data.prescription_id;
+        state.prescription.status = 'pending';
+      }
+
+      showToast('✓ Prescription uploaded! Awaiting pharmacist verification.');
       this.textContent = '✓ Uploaded';
+
+      // Poll for pharmacist verification every 5 seconds
+      const prescriptionId = data.prescription_id;
+      const pollInterval = setInterval(async () => {
+        try {
+          const statusRes = await Auth.fetch('/prescriptions');
+          const prescriptions = await statusRes.json();
+          const current = prescriptions.find(p => p.prescription_id === prescriptionId);
+          if (current) {
+            if (current.status === 'verified') {
+              if (typeof state !== 'undefined') state.prescription.status = 'verified';
+              const verifiedEl  = document.getElementById('st-verified');
+              const verifiedDot = document.getElementById('dot-verified');
+              if (verifiedEl)  verifiedEl.style.opacity = '1';
+              if (verifiedDot) verifiedDot.style.background = 'var(--red)';
+              showToast('✓ Prescription verified by pharmacist!');
+              clearInterval(pollInterval);
+            } else if (current.status === 'rejected') {
+              if (typeof state !== 'undefined') state.prescription.status = 'rejected';
+              showToast('⚠ Prescription rejected: ' + (current.rejection_reason || 'No reason given.'));
+              clearInterval(pollInterval);
+            }
+          }
+        } catch {}
+      }, 5000);
 
     } catch (err) {
       showToast('⚠ ' + err.message);
