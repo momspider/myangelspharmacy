@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Medicine Catalog — Angel's Pharmacy</title>
+    <meta name="description"
+        content="Browse all available medicines at Angel's Pharmacy, Valenzuela City. No login required." />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/catalog.css" />
+    <script src="auth.js"></script>
+
+</head>
+
+<body>
+
+    <nav class="site-nav" aria-label="Main navigation">
+        <div class="nav-container">
+            <a class="brand" href="index.html">
+                <div class="brand-icon" id="logo-wrap">
+                    <img id="logo-img" src="assets/logo.png" alt="Angel's Pharmacy Logo"
+                        style="width:100%;height:100%;object-fit:contain;" />
+                    <span id="logo-fallback">A+</span>
+                </div>
+                Angel's Pharmacy
+            </a>
+            <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu"
+                aria-label="Toggle navigation">☰</button>
+            <ul id="nav-menu" class="nav-menu" hidden>
+                <li><a href="catalog.html" class="active">Medicines</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="more-info.html">More Info</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div id="nav-auth" style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+                <!-- Populated by JS based on session -->
+            </div>
+        </div>
+    </nav>
+
+    <div class="catalog-hero">
+        <h1>💊 Medicine Catalog</h1>
+        <p>Browse all available medicines at Angel's Pharmacy — Valenzuela City</p>
+    </div>
+
+    <div class="catalog-wrap">
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <input type="search" id="search-input" placeholder="Search by name, category, or description…"
+                aria-label="Search medicines" />
+            <select class="filter-select" id="category-filter" onchange="applyFilters()">
+                <option value="">All Categories</option>
+            </select>
+            <select class="filter-select" id="type-filter" onchange="applyFilters()">
+                <option value="">All Types</option>
+                <option value="otc">OTC Only</option>
+                <option value="rx">Rx Only</option>
+            </select>
+            <label class="filter-toggle">
+                <input type="checkbox" id="sameday-filter" onchange="applyFilters()" />
+                Same-day only
+            </label>
+        </div>
+
+        <!-- CATEGORY PILLS -->
+        <div class="category-pills" id="category-pills"></div>
+
+        <!-- STATS -->
+        <div class="catalog-stats">
+            <div class="count" id="results-count">Loading…</div>
+            <div style="font-size:13px;color:var(--muted);">No login required to browse</div>
+        </div>
+
+        <!-- MEDICINE GRID -->
+        <div id="med-grid" class="med-grid">
+            <!-- Skeleton loading -->
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+        </div>
+
+    </div>
+
+    <footer
+        style="max-width:var(--container);margin:0 auto;padding:22px 24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border);">
+        <span id="year"></span> Angel's Pharmacy — Valenzuela City &nbsp;|&nbsp;
+        <a href="contact.html">Contact Us</a>
+    </footer>
+
+    <!-- LOGIN PROMPT MODAL -->
+    <div class="login-prompt-overlay" id="login-prompt" onclick="handlePromptOverlay(event)">
+        <div class="login-prompt-modal">
+            <div class="login-prompt-ico">🔐</div>
+            <h3>Login Required</h3>
+            <p id="login-prompt-msg">Please log in to your account to add items to your cart and place orders.</p>
+            <div class="login-prompt-btns">
+                <button class="btn-ghost" onclick="closeLoginPrompt()">Continue Browsing</button>
+                <a href="index.html" class="btn" id="login-redirect-btn">Log In / Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="js/catalog.js"></script>
+</body>
+
+</html>

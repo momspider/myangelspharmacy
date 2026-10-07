@@ -1,17 +1,32 @@
 {
-  "name": "angels-pharmacy",
+  "name": "angels-pharmacy-system",
   "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/admiraLLorwix/angels-pharmacy-system#readme",
+  "bugs": {
+    "url": "https://github.com/admiraLLorwix/angels-pharmacy-system/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/admiraLLorwix/angels-pharmacy-system.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "module",
+  "main": "server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.3.1",
-    "helmet": "^7.1.0",
-    "multer": "^1.4.5-lts.1"
+    "@supabase/supabase-js": "^2.117.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "multer": "^2.4.0"
+  },
+  "devDependencies": {
+    "supabase": "^2.120.0"
   }
 }

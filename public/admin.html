@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Admin Panel — Angel's Pharmacy</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <script src="auth.js"></script>
+
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon" style="width:38px;height:38px;font-size:15px;margin-bottom:10px;">A+</div>
+                <div class="sidebar-title">Angel's Pharmacy</div>
+                <div class="sidebar-sub" id="panel-role-label">Admin Panel</div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section">Overview</div>
+                <button class="sidebar-link active" data-panel="dashboard" onclick="switchPanel('dashboard',this)">
+                    <span class="ico">📊</span> Dashboard
+                </button>
+                <div class="sidebar-section">Management</div>
+                <button class="sidebar-link admin-only" data-panel="pos" onclick="switchPanel('pos',this)">
+                    <span class="ico">🧾</span> POS
+                </button>
+                <button class="sidebar-link admin-only" data-panel="users" onclick="switchPanel('users',this)">
+                    <span class="ico">👥</span> Users
+                </button>
+                <button class="sidebar-link admin-only" data-panel="products" onclick="switchPanel('products',this)">
+                    <span class="ico">💊</span> Products
+                </button>
+                <button class="sidebar-link" data-panel="prescriptions" onclick="switchPanel('prescriptions',this)">
+                    <span class="ico">📋</span> Prescriptions
+                </button>
+                <button class="sidebar-link" data-panel="orders" onclick="switchPanel('orders',this)">
+                    <span class="ico">📦</span> Orders
+                </button>
+                <div class="sidebar-section">System</div>
+                <button class="sidebar-link" data-panel="branches" onclick="switchPanel('branches',this)">
+                    <span class="ico">🏥</span> Branches
+                </button>
+                <button class="sidebar-link" data-panel="settings" onclick="switchPanel('settings',this)">
+                    <span class="ico">⚙️</span> Settings
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="admin-badge">
+                    <div class="admin-avatar" id="admin-avatar">A</div>
+                    <div>
+                        <div class="admin-name" id="admin-name">Administrator</div>
+                        <div class="admin-role" id="admin-email">admin</div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="Auth.logOut()">🚪 Sign Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <div class="admin-main">
+            <div class="admin-topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <div class="topbar-title" id="topbar-title">Dashboard</div>
+                </div>
+                <div class="topbar-right">
+                    <span class="topbar-pill" id="topbar-pill">🛡️ Admin Access</span>
+                    <button class="btn" onclick="Auth.logOut()" style="font-size:12px;padding:7px 14px;">Sign
+                        Out</button>
+                </div>
+            </div>
+
+            <div class="admin-content">
+
+                <!-- DASHBOARD -->
+                <div class="admin-panel active" id="panel-dashboard">
+                    <div class="stat-grid">
+                        <div class="stat-card admin-only">
+                            <div class="stat-ico red">👥</div>
+                            <div>
+                                <div class="stat-num" id="stat-users">—</div>
+                                <div class="stat-label">Registered Users</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-ico green">💊</div>
+                            <div>
+                                <div class="stat-num" id="stat-products">—</div>
+                                <div class="stat-label">Products in Catalog</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-ico amber">📋</div>
+                            <div>
+                                <div class="stat-num" id="stat-pending">—</div>
+                                <div class="stat-label">Pending Prescriptions</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-ico blue">📦</div>
+                            <div>
+                                <div class="stat-num" id="stat-orders">—</div>
+                                <div class="stat-label">Orders Today</div>
+                            </div>
+                        </div>
+                        <div class="stat-card admin-only">
+                            <div class="stat-ico green">💰</div>
+                            <div>
+                                <div class="stat-num" id="stat-revenue">—</div>
+                                <div class="stat-label">Revenue (30 days)</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-ico amber">⚠️</div>
+                            <div>
+                                <div class="stat-num" id="stat-lowstock">—</div>
+                                <div class="stat-label">Low Stock Items</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="qa-grid">
+                        <div class="qa-card admin-only"
+                            onclick="switchPanel('pos', document.querySelector('[data-panel=pos]'))">
+                            <div class="qa-ico">🧾</div>
+                            <div class="qa-label">Open POS</div>
+                            <div class="qa-desc">Process walk-in sales at the counter.</div>
+                        </div>
+                        <div class="qa-card"
+                            onclick="switchPanel('prescriptions', document.querySelector('[data-panel=prescriptions]'))">
+                            <div class="qa-ico">📋</div>
+                            <div class="qa-label">Review Prescriptions</div>
+                            <div class="qa-desc">Approve or reject pending Rx submissions.</div>
+                        </div>
+                        <div class="qa-card"
+                            onclick="switchPanel('orders', document.querySelector('[data-panel=orders]'))">
+                            <div class="qa-ico">📦</div>
+                            <div class="qa-label">Orders Queue</div>
+                            <div class="qa-desc">View and manage pick-up orders.</div>
+                        </div>
+                        <div class="qa-card admin-only"
+                            onclick="switchPanel('products', document.querySelector('[data-panel=products]'))">
+                            <div class="qa-ico">💊</div>
+                            <div class="qa-label">Manage Products</div>
+                            <div class="qa-desc">Edit prices and availability.</div>
+                        </div>
+                    </div>
+                    <div class="section-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <div class="admin-table-wrap" style="padding:4px 0;">
+                        <div style="padding:0 16px;" id="activity-feed">
+                            <div style="padding:24px;text-align:center;color:var(--muted);">Loading activity…</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POS -->
+                <div class="admin-panel" id="panel-pos">
+                    <div class="section-header">
+                        <h2>🧾 Point of Sale</h2>
+                        <span class="muted" style="font-size:13px;">Walk-in counter sales</span>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <input id="pos-search" type="search" placeholder="Search medicines…"
+                            style="width:100%;max-width:400px;" oninput="filterPosProducts(this.value)" />
+                    </div>
+                    <div class="pos-shell">
+                        <div>
+                            <div class="pos-products-grid" id="pos-products-grid">
+                                <div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);">Loading
+                                    products…</div>
+                            </div>
+                        </div>
+                        <div class="pos-cart">
+                            <div class="pos-cart-header">
+                                <h3>🛒 Current Sale</h3>
+                                <div class="small muted" id="pos-item-count">0 items</div>
+                            </div>
+                            <div class="pos-cart-items" id="pos-cart-items">
+                                <div class="pos-empty">No items added yet.<br>Click a product to add it.</div>
+                            </div>
+                            <div class="pos-cart-footer">
+                                <select class="pos-branch-select" id="pos-branch">
+                                    <option value="">Select branch…</option>
+                                </select>
+                                <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">💡 Payment will be
+                                    collected at
+                                    pick-up.</div>
+                                <div class="pos-total">
+                                    <span class="pos-total-label">TOTAL</span>
+                                    <span class="pos-total-amount" id="pos-total">₱0.00</span>
+                                </div>
+                                <button class="pos-process-btn" id="pos-process-btn" onclick="processSale()">Process
+                                    Sale →</button>
+                                <button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px;"
+                                    onclick="clearPosCart()">Clear Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- USERS -->
+                <div class="admin-panel" id="panel-users">
+                    <div class="section-header">
+                        <h2>Registered Users</h2>
+                        <span id="user-count-label" class="muted"></span>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Role</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody">
+                                <tr>
+                                    <td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Loading
+                                        users…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PRODUCTS -->
+                <div class="admin-panel" id="panel-products">
+                    <div class="section-header">
+                        <h2>Product Catalog</h2>
+                        <button class="btn" style="font-size:12px;" onclick="openAddProductModal()">+ Add
+                            Product</button>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Price (₱)</th>
+                                    <th>Type</th>
+                                    <th>Same-day</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-tbody">
+                                <tr>
+                                    <td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Loading
+                                        products…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PRESCRIPTIONS -->
+                <div class="admin-panel" id="panel-prescriptions">
+                    <div class="section-header">
+                        <h2>Prescription Queue</h2>
+                        <span class="muted" id="rx-count-label"></span>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>File</th>
+                                    <th>Branch</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rx-tbody">
+                                <tr>
+                                    <td colspan="6" style="padding:24px;text-align:center;color:var(--muted);">Loading
+                                        prescriptions…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ORDERS -->
+                <div class="admin-panel" id="panel-orders">
+                    <div class="section-header">
+                        <h2>Orders Queue</h2>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <select id="order-status-filter" onchange="loadOrders()"
+                                style="padding:6px 10px;border-radius:8px;border:1px solid var(--border);font-family:inherit;font-size:12px;background:white;">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="ready">Ready</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Branch</th>
+                                    <th>Total</th>
+                                    <th>Placed</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
+                                <tr>
+                                    <td colspan="7" style="padding:24px;text-align:center;color:var(--muted);">Loading
+                                        orders…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- BRANCHES -->
+                <div class="admin-panel" id="panel-branches">
+                    <div class="section-header">
+                        <h2>Branch Overview</h2>
+                    </div>
+                    <div id="branches-grid"
+                        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;"></div>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-panel" id="panel-settings">
+                    <div class="section-header">
+                        <h2>System Settings</h2>
+                    </div>
+                    <div class="card" style="max-width:600px;">
+                        <h3 style="margin:0 0 16px;font-size:15px;">Pharmacy Details</h3>
+                        <div class="info-row">
+                            <div class="info-icon">🏢</div>
+                            <div>
+                                <div class="info-label">License</div>
+                                <div class="info-value">PH-123456</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">📍</div>
+                            <div>
+                                <div class="info-label">Branches</div>
+                                <div class="info-value">Punturin &amp; Malinta, Valenzuela City</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">🏛️</div>
+                            <div>
+                                <div class="info-label">Regulatory Body</div>
+                                <div class="info-value">Department of Health (DOH), Philippines</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="max-width:600px;margin-top:16px;">
+                        <h3 style="margin:0 0 16px;font-size:15px;">Account Details</h3>
+                        <div class="info-row">
+                            <div class="info-icon">📧</div>
+                            <div>
+                                <div class="info-label">Email</div>
+                                <div class="info-value" id="settings-email">—</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">🔖</div>
+                            <div>
+                                <div class="info-label">Role</div>
+                                <div class="info-value" id="settings-role">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="edit-overlay" id="edit-overlay" onclick="handleEditOverlay(event)">
+        <div class="edit-modal">
+            <button class="edit-close" onclick="closeEditModal()">✕</button>
+            <h3 id="edit-title">Edit Product</h3>
+            <input type="hidden" id="edit-id" />
+            <div class="form-group"><label>Product Name</label><input type="text" id="edit-name" /></div>
+            <div class="form-group"><label>Price (₱)</label><input type="number" id="edit-price" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select id="edit-rx"
+                    style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);font-family:inherit;font-size:14px;background:var(--off-white);color:var(--text);">
+                    <option value="true">Rx (Prescription Required)</option>
+                    <option value="false">OTC (Over the Counter)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Same-day Availability</label>
+                <select id="edit-sameday"
+                    style="width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);font-family:inherit;font-size:14px;background:var(--off-white);color:var(--text);">
+                    <option value="true">Yes — Same Day</option>
+                    <option value="false">No — Next Day</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ghost" onclick="closeEditModal()">Cancel</button>
+                <button class="btn" onclick="saveEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div class="receipt-overlay" id="receipt-overlay">
+        <div class="receipt-modal">
+            <div class="receipt-header">
+                <h3>Angel's Pharmacy</h3>
+                <p>Official Receipt · License No: PH-123456</p>
+            </div>
+            <div class="receipt-body" id="receipt-body"></div>
+            <div class="receipt-footer">
+                <button class="btn-ghost" style="flex:1;" onclick="closeReceipt()">Close</button>
+                <button class="btn" style="flex:1;" onclick="printReceipt()">🖨 Print</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

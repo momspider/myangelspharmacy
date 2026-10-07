@@ -1,0 +1,42 @@
+        .contact-cta {
+            background: linear-gradient(135deg, var(--red-deeper), var(--red));
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-cta::before {
+            content: '📞';
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 80px;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .contact-cta h2 {
+            color: white;
+            margin: 0 0 6px;
+            font-size: 1.2rem;
+        }
+
+        .contact-cta p {
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .contact-cta .btn-white {
+            flex-shrink: 0;
+        }
