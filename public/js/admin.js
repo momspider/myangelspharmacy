@@ -9,6 +9,7 @@ let posCart = [];
 (async () => {
     // Allow both admin and pharmacist (staff) roles
     _adminUser = await Auth.requireAuth();
+    console.log(_adminUser);
     if (!_adminUser) return;
 
     if (!['admin', 'pharmacist'].includes(_adminUser.role)) {

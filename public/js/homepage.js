@@ -5,12 +5,16 @@ let _currentUser = null;
     _currentUser = await Auth.requireAuth();
     if (!_currentUser) return; // requireAuth() redirects if no session
 
+    const userProfile =  _currentUser;
+
+    console.log(userProfile);
+
     /* Populate user greeting */
-    const firstName = (_currentUser.full_name || _currentUser.email).split(' ')[0];
+    const firstName = userProfile.full_name;
     const initial = firstName.charAt(0).toUpperCase();
     const avatar = document.getElementById('user-avatar');
     const nameEl = document.getElementById('user-name');
-    if (avatar) { avatar.textContent = initial; avatar.title = _currentUser.full_name || ''; }
+    if (avatar) { avatar.textContent = initial; avatar.title = userProfile.full_name || userProfile.email || ''; }
     if (nameEl) { nameEl.textContent = 'Hi, ' + firstName + '!'; nameEl.style.display = ''; }
 
     /* Load data now that we have a valid session */

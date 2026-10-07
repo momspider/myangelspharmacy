@@ -17,7 +17,6 @@ const state = {
 };
 
 /* ── BOOT ─────────────────────────────────────────────────── */
-
 document.addEventListener("DOMContentLoaded", () => {
     const yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = "\u00A9 " + new Date().getFullYear();

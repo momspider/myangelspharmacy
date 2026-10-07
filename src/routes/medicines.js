@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     const { search, category, requires_rx, same_day } = req.query;
 
     let query = supabaseAdmin
-        .from('medicines')
+        .from('Product')
         .select('*')
         .eq('is_active', true)
         .order('name');
@@ -37,9 +37,9 @@ router.get('/', async (req, res) => {
 /* ── SINGLE ──────────────────────────────────────────────────────── */
 router.get('/:id', async (req, res) => {
     const { data, error } = await supabaseAdmin
-        .from('medicines')
+        .from('Product')
         .select('*')
-        .eq('medicine_id', req.params.id)
+        .eq('product_id', req.params.id)
         .eq('is_active', true)
         .single();
 
@@ -57,7 +57,7 @@ router.post('/', requireAdmin, async (req, res) => {
     }
 
     const { data, error } = await supabaseAdmin
-        .from('medicines')
+        .from('Product')
         .insert({
             name, sku, unit_price, category, requires_rx,
             same_day_available, supplier_verified, image_url
@@ -78,9 +78,9 @@ router.put('/:id', requireAdmin, async (req, res) => {
     );
 
     const { data, error } = await supabaseAdmin
-        .from('medicines')
+        .from('Product')
         .update(updates)
-        .eq('medicine_id', req.params.id)
+        .eq('product_id', req.params.id)
         .select()
         .single();
 
@@ -91,9 +91,9 @@ router.put('/:id', requireAdmin, async (req, res) => {
 /* ── DEACTIVATE (admin) ──────────────────────────────────────────── */
 router.delete('/:id', requireAdmin, async (req, res) => {
     const { error } = await supabaseAdmin
-        .from('medicines')
+        .from('Product')
         .update({ is_active: false })
-        .eq('medicine_id', req.params.id);
+        .eq('product_id', req.params.id);
 
     if (error) return res.status(400).json({ error: error.message });
     return res.json({ message: 'Medicine deactivated.' });

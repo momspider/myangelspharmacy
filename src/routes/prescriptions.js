@@ -29,7 +29,7 @@ router.post('/', requireAuth, upload.single('prescription'), async (req, res) =>
     // Upload to Supabase Storage: prescriptions/{user_id}/{timestamp}-{filename}
     const storagePath = `${req.user.id}/${Date.now()}-${file.originalname}`;
     const { error: uploadErr } = await supabaseAdmin.storage
-        .from('prescriptions')
+        .from('Prescription')
         .upload(storagePath, file.buffer, {
             contentType: file.mimetype,
             upsert: false,
@@ -39,7 +39,7 @@ router.post('/', requireAuth, upload.single('prescription'), async (req, res) =>
 
     // Save prescription record
     const { data, error } = await supabaseAdmin
-        .from('prescriptions')
+        .from('Prescription')
         .insert({
             user_id: req.user.id,
             branch_id,
@@ -63,7 +63,7 @@ router.post('/', requireAuth, upload.single('prescription'), async (req, res) =>
 /* ── GET MY PRESCRIPTIONS ────────────────────────────────────────── */
 router.get('/', requireAuth, async (req, res) => {
     const { data, error } = await supabaseAdmin
-        .from('prescriptions')
+        .from('Prescription')
         .select('prescription_id, file_name, status, uploaded_at, reviewed_at, rejection_reason, branches(name)')
         .eq('user_id', req.user.id)
         .order('uploaded_at', { ascending: false });
@@ -75,7 +75,7 @@ router.get('/', requireAuth, async (req, res) => {
 /* ── GET PENDING PRESCRIPTIONS (staff) ───────────────────────────── */
 router.get('/pending', requireStaff, async (req, res) => {
     const { data, error } = await supabaseAdmin
-        .from('prescriptions')
+        .from('Prescription')
         .select(`
       prescription_id, file_name, file_path, status, uploaded_at, user_id,
       branches ( name )
@@ -90,7 +90,7 @@ router.get('/pending', requireStaff, async (req, res) => {
 /* ── GET SIGNED URL (staff — to view the file) ───────────────────── */
 router.get('/:id/file', requireStaff, async (req, res) => {
     const { data: presc, error: prescErr } = await supabaseAdmin
-        .from('prescriptions')
+        .from('Prescription')
         .select('file_path')
         .eq('prescription_id', req.params.id)
         .single();
@@ -98,7 +98,7 @@ router.get('/:id/file', requireStaff, async (req, res) => {
     if (prescErr) return res.status(404).json({ error: 'Prescription not found.' });
 
     const { data, error } = await supabaseAdmin.storage
-        .from('prescriptions')
+        .from('Prescription')
         .createSignedUrl(presc.file_path, 60 * 10); // 10-minute signed URL
 
     if (error) return res.status(500).json({ error: error.message });
@@ -117,7 +117,7 @@ router.patch('/:id', requireStaff, async (req, res) => {
     }
 
     const { data, error } = await supabaseAdmin
-        .from('prescriptions')
+        .from('Prescription')
         .update({
             status,
             rejection_reason: rejection_reason || null,

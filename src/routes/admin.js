@@ -18,7 +18,7 @@ const router = Router();
 router.get('/dashboard', requireStaff, async (req, res) => {
     const [orders, prescriptions, inventory, sales] = await Promise.all([
         supabaseAdmin.from('orders').select('status', { count: 'exact' }),
-        supabaseAdmin.from('prescriptions').select('status', { count: 'exact' }).eq('status', 'pending'),
+        supabaseAdmin.from('Prescription').select('status', { count: 'exact' }).eq('status', 'pending'),
         supabaseAdmin.from('inventory').select('stock_quantity, reorder_level'),
         supabaseAdmin.from('sales').select('unit_price, quantity')
             .gte('sale_timestamp', new Date(Date.now() - 30 * 86400000).toISOString()), // last 30 days
@@ -137,9 +137,9 @@ router.post('/users/:id/role', requireAdmin, async (req, res) => {
     }
 
     const { error } = await supabaseAdmin
-        .from('profiles')
+        .from('Profiles')
         .update({ role })
-        .eq('id', req.params.id);
+        .eq('uuid', req.params.id);
 
     if (error) return res.status(400).json({ error: error.message });
     return res.json({ message: `User role updated to "${role}".` });
@@ -148,8 +148,8 @@ router.post('/users/:id/role', requireAdmin, async (req, res) => {
 /* ── USERS LIST (admin only) ─────────────────────────────────────── */
 router.get('/users', requireAdmin, async (req, res) => {
     const { data, error } = await supabaseAdmin
-        .from('profiles')
-        .select('id, full_name, phone, role, branch_id, created_at');
+        .from('Profiles')
+        .select('uuid, full_name, phone, role, branch_id, created_at');
 
     if (error) return res.status(500).json({ error: error.message });
 

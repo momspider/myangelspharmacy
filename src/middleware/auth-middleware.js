@@ -20,9 +20,9 @@ export async function requireAuth(req, res, next) {
 
   // Fetch the user's profile (role, branch, etc.)
   const { data: profile, error: profileError } = await supabaseAdmin
-    .from('profiles')
+    .from('Profiles')
     .select('*')
-    .eq('id', user.id)
+    .eq('uuid', user.id)
     .single();
 
     console.log('profile:', profile, 'error:', profileError);

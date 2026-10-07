@@ -22,9 +22,9 @@ router.post('/', requireAuth, async (req, res) => {
     // Fetch medicine prices from DB (never trust client-sent prices)
     const medicineIds = items.map(i => i.medicine_id);
     const { data: medicines, error: medErr } = await supabaseAdmin
-        .from('medicines')
-        .select('medicine_id, unit_price, requires_rx, is_active')
-        .in('medicine_id', medicineIds);
+        .from('Product')
+        .select('product_id, price, is_active')
+        .in('product_id', medicineIds);
 
     if (medErr) return res.status(500).json({ error: medErr.message });
 
@@ -35,11 +35,11 @@ router.post('/', requireAuth, async (req, res) => {
             return res.status(400).json({ error: `Medicine ${item.medicine_id} is unavailable.` });
         }
         // If any item requires Rx, a prescription must be provided
-        if (med.requires_rx && !prescription_id) {
-            return res.status(400).json({
-                error: `${med.name || item.medicine_id} requires a verified prescription.`
-            });
-        }
+        // if (med.requires_rx && !prescription_id) {
+        //     return res.status(400).json({
+        //         error: `${med.name || item.medicine_id} requires a verified prescription.`
+        //     });
+        // }
     }
 
     // Calculate total
