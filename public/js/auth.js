@@ -13,6 +13,7 @@ const Auth = (() => {
     function getRefreshToken() { return localStorage.getItem(REFRESH_KEY); }
 
     function saveTokens(access_token, refresh_token) {
+        debugger;
         sessionStorage.setItem(ACCESS_KEY, access_token);
         if (refresh_token) localStorage.setItem(REFRESH_KEY, refresh_token);
     }

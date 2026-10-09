@@ -367,7 +367,7 @@ p:last-child { margin-bottom: 0; }
 .hero-badge:hover { background: rgba(255,255,255,0.24); }
 .hero-actions {
   display: flex; flex-direction: column; gap: 10px;
-  align-items: flex-end; flex-shrink: 0; position: relative; z-index: 1;
+  align-items: center; flex-shrink: 0; position: relative; z-index: 1;
 }
 @media (max-width: 700px) {
   .hero { flex-direction: column; padding: 28px 24px; }

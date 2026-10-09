@@ -110,7 +110,7 @@ function setupUpload() {
 
             const formData = new FormData();
             formData.append("prescription", file);
-            formData.append("branch_id", branchMap[state.selectedBranch || "punturin"]);
+            /*formData.append("branch_id", branchMap[state.selectedBranch || "punturin"]);*/
 
             const token = sessionStorage.getItem("ap_access_token");
             const headers = {};
@@ -375,14 +375,14 @@ function createCartDrawer() {
         "<span id=\"cart-subtotal\" style=\"font-weight:700;color:var(--red);font-size:16px;\"></span>" +
         "</div>" +
         "<div style=\"margin-bottom:12px;\">" +
-        "<label style=\"font-size:12px;font-weight:600;color:var(--text-sub);display:block;margin-bottom:6px;\">Pick-up Branch</label>" +
+        /*"<label style=\"font-size:12px;font-weight:600;color:var(--text-sub);display:block;margin-bottom:6px;\">Pick-up Branch</label>" +
         "<select id=\"cart-branch\" " +
         "style=\"width:100%;padding:9px 12px;border-radius:10px;border:1.5px solid var(--border);" +
         "font-family:inherit;font-size:13px;background:#fff;color:var(--text);\">" +
-        "<option value=\"\">Select a branch\u2026</option>" +
+            "<option value=\"\">Select a branch\u2026</option>" +
         "<option value=\"punturin\">Punturin Branch</option>" +
         "<option value=\"malinta\">Malinta Branch</option>" +
-        "</select>" +
+        "</select>" +*/
         "</div>" +
         "<button id=\"place-order-btn\" " +
         "style=\"width:100%;padding:12px;border-radius:10px;" +
@@ -541,7 +541,7 @@ async function placeOrder() {
 
     const branchEl = document.getElementById("cart-branch");
     const branch = branchEl ? branchEl.value : "";
-    if (!branch) { showToast("Please select a pick-up branch."); return; }
+    if (branch) { showToast("Please select a pick-up branch."); return; }
 
     if (!state.cart.length) { showToast("Your cart is empty."); return; }
 
@@ -568,7 +568,7 @@ async function placeOrder() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                branch_id: branchMap[branch] || branch,
+                /*branch_id: branchMap[branch] || branch,*/
                 prescription_id,
                 items: state.cart.map(i => ({
                     medicine_id: i.id,

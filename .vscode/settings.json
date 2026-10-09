@@ -1,0 +1,6 @@
+{
+    "postgres-language-server.bin": "./node_modules/@postgres-language-server/cli/bin/postgres-language-server",
+    "[sql]": {
+        "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+    }
+}

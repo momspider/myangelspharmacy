@@ -5,7 +5,7 @@
         const params = new URLSearchParams(window.location.search);
         const redirect = params.get('redirect');
         if (redirect) window.location.replace(redirect);
-        else window.location.replace(session.role === 'admin' ? 'admin.html' : 'homepage.html');
+        else window.location.replace(['admin', 'pharmacist'].includes(session.role) ? 'admin.html' : 'homepage.html');
     }
     const params = new URLSearchParams(window.location.search);
     if (params.get('signup') === '1') openModal('signup');

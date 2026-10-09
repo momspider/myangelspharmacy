@@ -29,7 +29,7 @@ function renderNavAuth() {
         const initial = (session.full_name || session.email).charAt(0).toUpperCase();
         navAuth.innerHTML = `
       <div style="width:32px;height:32px;border-radius:99px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">${initial}</div>
-      <a href="${session.role === 'admin' ? 'admin.html' : 'homepage.html'}" class="btn" style="font-size:12px;padding:7px 14px;">My Account</a>
+      <a href="${['admin', 'pharmacist'].includes(session.role) ? 'admin.html' : 'homepage.html'}" class="btn" style="font-size:12px;padding:7px 14px;">My Account</a>
     `;
     } else {
         navAuth.innerHTML = `

@@ -15,8 +15,9 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node --env-file=.env server.js",
+    "debug": "node --env-file=.env server.js",
+    "inspect": "node --env-file=.env --inspect server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
@@ -27,6 +28,7 @@
     "multer": "^2.4.0"
   },
   "devDependencies": {
+    "@postgres-language-server/cli": "^0.28.0",
     "supabase": "^2.120.0"
   }
 }

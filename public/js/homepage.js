@@ -1,11 +1,12 @@
 /* ── ✅ Auth guard — async, uses real Supabase session ── */
 let _currentUser = null;
 
-(async () => {
+async function start() {
+    debugger;
     _currentUser = await Auth.requireAuth();
     if (!_currentUser) return; // requireAuth() redirects if no session
 
-    const userProfile =  _currentUser;
+    const userProfile = _currentUser;
 
     console.log(userProfile);
 
@@ -20,7 +21,9 @@ let _currentUser = null;
     /* Load data now that we have a valid session */
     await loadMedicines();
     await loadMyOrders();
-})();
+}
+
+start();
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -195,14 +198,14 @@ document.getElementById('request-verification')?.addEventListener('click', async
     this.textContent = 'Uploading…';
 
     try {
-        const branchMap = {
+        /*const branchMap = {
             punturin: "12a814e2-f9b9-42a7-87a1-f5a66bfc5904",
             malinta: "850afc97-c7d3-4cc9-b119-deedb07fd1ac"
-        };
+        };*/
 
         const formData = new FormData();
         formData.append('prescription', file);
-        formData.append('branch_id', branchMap[branchEl.value]);
+        /*formData.append('branch_id', branchMap[branchEl.value]);*/
 
         const token = sessionStorage.getItem('ap_access_token');
         const res = await fetch('/api/prescriptions', {

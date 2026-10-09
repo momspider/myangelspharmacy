@@ -12,10 +12,10 @@ const router = Router();
 
 /* ── PLACE ORDER ─────────────────────────────────────────────────── */
 router.post('/', requireAuth, async (req, res) => {
-    const { branch_id, items, prescription_id, notes } = req.body;
+    const { /*branch_id,*/ items, prescription_id, notes } = req.body;
     // items: [{ medicine_id, quantity }]
 
-    if (!branch_id || !items || items.length === 0) {
+    if (branch_id || !items || items.length === 0) {
         return res.status(400).json({ error: 'branch_id and items are required.' });
     }
 

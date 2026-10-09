@@ -15,7 +15,7 @@ import { requireStaff, requireAdmin } from '../middleware/auth-middleware.js';
 const router = Router();
 
 /* ── DASHBOARD STATS ─────────────────────────────────────────────── */
-router.get('/dashboard', requireStaff, async (req, res) => {
+router.get('/dashboard', async (req, res) => {
     const [orders, prescriptions, inventory, sales] = await Promise.all([
         supabaseAdmin.from('orders').select('status', { count: 'exact' }),
         supabaseAdmin.from('Prescription').select('status', { count: 'exact' }).eq('status', 'pending'),
@@ -136,9 +136,20 @@ router.post('/users/:id/role', requireAdmin, async (req, res) => {
         return res.status(400).json({ error: `Role must be one of: ${validRoles.join(', ')}` });
     }
 
+    const { data: roleRecord, error: roleError } = await supabaseAdmin
+        .from('UserRole')
+        .select('role_id')
+        .eq('role_name', role)
+        .single();
+
+    if (roleError) {
+        console.error('Role lookup failed:', roleError);
+        return res.status(500).json({ error: 'Unable to find the requested role.' });
+    }
+
     const { error } = await supabaseAdmin
         .from('Profiles')
-        .update({ role })
+        .update({ role_id: roleRecord.role_id })
         .eq('uuid', req.params.id);
 
     if (error) return res.status(400).json({ error: error.message });
@@ -149,7 +160,7 @@ router.post('/users/:id/role', requireAdmin, async (req, res) => {
 router.get('/users', requireAdmin, async (req, res) => {
     const { data, error } = await supabaseAdmin
         .from('Profiles')
-        .select('uuid, full_name, phone, role, branch_id, created_at');
+        .select('uuid, full_name, phone, created_at, role:UserRole(role_name)');
 
     if (error) return res.status(500).json({ error: error.message });
 
@@ -161,8 +172,12 @@ router.get('/users', requireAdmin, async (req, res) => {
     authUsers.users.forEach(u => { emailMap[u.id] = u.email; });
 
     const merged = (data || []).map(p => ({
-        ...p,
-        email: emailMap[p.id] || '—',
+        id: p.uuid,
+        full_name: p.full_name,
+        phone: p.phone,
+        created_at: p.created_at,
+        role: p.role?.role_name || 'customer',
+        email: emailMap[p.uuid] || '—',
     }));
 
     return res.json(merged);

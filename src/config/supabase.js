@@ -5,8 +5,6 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-process.loadEnvFile("././.env");
-
 const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_PUBLISHABLE = process.env.SUPABASE_PUBLISHABLE_KEY;
 const SUPABASE_SECRET      = process.env.SUPABASE_SECRET_KEY;

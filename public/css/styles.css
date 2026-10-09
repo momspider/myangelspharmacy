@@ -111,6 +111,7 @@
 }
 
 .btn-lg {
+  align-items: center;
   padding: 14px 34px;
   font-size: 15px;
   border-radius: 14px;

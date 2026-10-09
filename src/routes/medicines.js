@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
     if (search) query = query.ilike('name', `%${search}%`);
     if (category) query = query.eq('category', category);
     if (requires_rx !== undefined) query = query.eq('requires_rx', requires_rx === 'true');
-    if (same_day !== undefined) query = query.eq('same_day_available', same_day === 'true');
+    if (same_day !== undefined) query = query.eq('same_day_', same_day === 'true');
 
     const { data, error } = await query;
     if (error) {
